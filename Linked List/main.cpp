@@ -14,12 +14,12 @@ int main()
     list.insert(9999,list.length()-1);
     list.insert(9999,list.length()/2);
 
-
-
-    
-
     list.print();
     std::cout<<"list.length= " << list.length() << "\n";
+    for(size_t i = 0; i<list.length(); i++)
+    {
+        std::cout<<"list["<<i<<"]="<<list.access(i)<<"\n";
+    }
 
     
 
