@@ -16,7 +16,7 @@ class SinglyLinkedList
     void add_to_start(T value);
     void insert(T value, size_t index);
 
-
+    T access(size_t index) const;
     void print() const; 
     size_t length() const;
 
@@ -97,7 +97,7 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
     {
         Node<T> * newNode = new Node<T>;
         newNode->value = value;
-        
+
         Node<T> * current = m_head;
         size_t i = 0 ;
         while(i<index)
@@ -110,12 +110,26 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
             current = current->next;
             i++;
         }
+        m_listLength++;
     }
     else
     {
         std::cout<<"Out of bounds index for insert().\n";
         exit(EXIT_FAILURE);
     }
+}
+
+template<typename T>
+T SinglyLinkedList<T>::access(size_t index) const
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+    while(i<index)
+    {
+        current = current->next;
+        i++;
+    }
+    return current->value;
 }
 
 template<typename T>
