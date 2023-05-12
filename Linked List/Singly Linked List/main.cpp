@@ -19,14 +19,16 @@ int main()
     std::cout<<"List length = " << list.length() << "\n";
     list.print_values();
 
-    size_t oldListLength = list.length();
-    for(size_t i = 0; i<oldListLength-2; i++)
-    {
-        list.delete_at(1);
-    }
-    std::cout<<"List length = " << list.length() << "\n";
-    list.print_values();
+    // size_t oldListLength = list.length();
+    // for(size_t i = 0; i<oldListLength-2; i++)
+    // {
+    //     list.delete_at(1);
+    // }
+    // std::cout<<"List length = " << list.length() << "\n";
+    // list.print_values();
 
-
+    SinglyLinkedList<int> list2(list);
+    std::cout<<"List2 length = " << list2.length() << "\n";
+    list2.print_values();
 
 }
