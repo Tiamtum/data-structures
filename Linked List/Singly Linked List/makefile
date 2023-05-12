@@ -8,10 +8,13 @@ $(TARGET): $(OBJFILES) $(DEPS)
 	$(CC) $(CFLAGS) $(OBJFILES) -o $(TARGET)
 
 main.o: main.cpp $(DEPS)
-	$(CC) $(CFLAGS) -c main.cpp
+	$(CC) $(CFLAGS) -c -g main.cpp
 
 clean:
-	rm *.o $(TARGET) 
+	rm *.o $(TARGET) cachegrind.out.*
 
 leak_check:
 	valgrind -s --leak-check=full --show-leak-kinds=all ./$(TARGET)
+
+cachegrind:
+	valgrind --tool=cachegrind --branch-sim=yes ./$(TARGET)
