@@ -9,15 +9,19 @@ class SinglyLinkedList
     public:
     SinglyLinkedList() = delete;
     SinglyLinkedList(T value);
-
     ~SinglyLinkedList();
 
     void add_to_end(T value);
     void add_to_start(T value);
     void insert(T value, size_t index);
 
+    void delete_end();
+    void delete_start();
+    void delete_at(size_t index);
+
     T access(size_t index) const;
-    void print() const; 
+    void print_list() const; 
+    void print_values() const;
     size_t length() const;
 
     private:
@@ -115,6 +119,91 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
     }
 }
 
+template <typename T>
+void SinglyLinkedList<T>::delete_end()
+{
+    if(m_listLength == 1)
+    {
+        std::cout<<"Error: List consists of a single node.\n";
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        Node<T> * current = m_head;
+        size_t i = 0;
+        while(current->next)
+        {
+            if(i == m_listLength-2)
+            {
+                delete(current->next);
+                m_listLength--;
+                current->next = nullptr;
+                break;
+            }
+            i++;
+            current = current->next;
+        }
+    }
+}
+
+template <typename T>
+void SinglyLinkedList<T>::delete_start()
+{
+    if(m_listLength == 1)
+    {
+        std::cout<<"Error: List consists of a single node.\n";
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        Node<T> * temp = m_head;
+        m_head = temp->next;
+        delete temp;
+        m_listLength--;
+    }
+}
+template <typename T>
+void SinglyLinkedList<T>::delete_at(size_t index)
+{   
+    if(m_listLength == 1)
+    {
+        std::cout<<"Error: List consists of a single node.\n";
+        exit(EXIT_FAILURE);
+    }
+    else if(index == 0)
+    {
+        this->delete_start();
+    }
+    else if(index == m_listLength-1)
+    {
+        this->delete_end();
+    }
+    else if(index > 0 && index < m_listLength-1)
+    {
+        Node<T> * current = m_head;
+        size_t i = 0;
+        while(current->next)
+        {
+            if(i == index-1)
+            {
+                Node<T> * temp = current->next;
+                current->next = temp->next;
+                delete temp;
+                m_listLength--;
+                break;
+            }
+            i++;
+            current = current->next;
+        }
+    }
+    else
+    {
+        std::cout<<"Out of bounds index for delete_at().\n";
+        exit(EXIT_FAILURE);        
+    }
+}
+
+
 template<typename T>
 T SinglyLinkedList<T>::access(size_t index) const
 {
@@ -129,7 +218,7 @@ T SinglyLinkedList<T>::access(size_t index) const
 }
 
 template<typename T>
-void SinglyLinkedList<T>::print() const 
+void SinglyLinkedList<T>::print_list() const 
 {
     Node<T> * current = m_head;
     while(current->next)
@@ -138,6 +227,15 @@ void SinglyLinkedList<T>::print() const
         current = current->next;
     }
     std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
+}
+
+template<typename T>
+void SinglyLinkedList<T>::print_values() const
+{
+    for(size_t i = 0; i < this->length(); i++)
+    {
+        std::cout<<"["<<i<<"] = " << this->access(i) << "\n";
+    }
 }
 
 template<typename T>
