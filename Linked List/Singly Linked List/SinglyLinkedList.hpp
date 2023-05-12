@@ -36,24 +36,20 @@ SinglyLinkedList<T>::SinglyLinkedList(T value)
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {
-    // std::cout<<"SinglyLinkedList destructor called\n";
     Node<T> * current = m_head;
-    while(current->next != nullptr)
+    while(current->next)
     {
         Node<T> * temp = current;
         current = current->next;
-        // std::cout<<"deleting node: value=" << temp->value << ", next: " << temp->next << "\n";
         delete temp;
     }
-    // std::cout<<"deleting node: value=" << current->value << ", next: " << current->next << "\n";
     delete current;
-    
 }
 
 template <typename T>
 void SinglyLinkedList<T>::add_to_end(T value)
 {
-    if(m_head->next == nullptr)
+    if(!(m_head->next))
     {
         Node<T> * tail = new Node<T>;
         m_head->next = tail;
@@ -64,7 +60,7 @@ void SinglyLinkedList<T>::add_to_end(T value)
     else
     {
         Node<T> * current = m_head;
-        while(current->next != nullptr)
+        while(current->next)
         {
             current = current->next;
         }
@@ -136,7 +132,7 @@ template<typename T>
 void SinglyLinkedList<T>::print() const 
 {
     Node<T> * current = m_head;
-    while(current->next != nullptr)
+    while(current->next)
     {
         std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
         current = current->next;
@@ -148,7 +144,5 @@ template<typename T>
 size_t SinglyLinkedList<T>::length() const{
     return m_listLength;
 }
-
-
 
 #endif 
