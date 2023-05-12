@@ -9,6 +9,7 @@ class SinglyLinkedList
     public:
     SinglyLinkedList() = delete;
     SinglyLinkedList(T value);
+    SinglyLinkedList(const SinglyLinkedList& list);
     ~SinglyLinkedList();
 
     void add_to_end(T value);
@@ -18,6 +19,8 @@ class SinglyLinkedList
     void delete_end();
     void delete_start();
     void delete_at(size_t index);
+
+    
 
     T access(size_t index) const;
     void print_list() const; 
@@ -36,10 +39,29 @@ SinglyLinkedList<T>::SinglyLinkedList(T value)
     m_head->value = value;
     m_head->next = nullptr;
     m_listLength++;
+    std::cout<<"list created: " << m_head << "\n";
 }
+
+template <typename T>
+SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list) 
+:m_listLength(list.m_listLength)
+{
+    m_head = new Node<T>;         //copying list.m_head directly wont work since when one list object falls out of scope, the other(s) copy(s)
+                                  //will not be able to destruct properly. hence new nodes must be created for each old node so
+                                  //they are in different memory locations
+
+    const Node<T> * originalCurrent = list.m_head; //const so cant change data. 'Node<T> * const originalCurrent' would not allow to change pointer
+    
+    m_head->value = originalCurrent->value; 
+    m_head->next = nullptr;
+
+    originalCurrent = originalCurrent->next; //step one ahead
+}
+
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {
+    std::cout<<"destructor called\n";
     Node<T> * current = m_head;
     while(current->next)
     {
@@ -202,7 +224,6 @@ void SinglyLinkedList<T>::delete_at(size_t index)
         exit(EXIT_FAILURE);        
     }
 }
-
 
 template<typename T>
 T SinglyLinkedList<T>::access(size_t index) const
