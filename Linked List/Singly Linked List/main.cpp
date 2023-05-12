@@ -4,24 +4,29 @@
 int main() 
 {
     SinglyLinkedList<int> list(0);
+    list.add_to_start(345);
     for(size_t i = 1 ; i<11; i++)
     {
         list.add_to_end(2*i);
         list.add_to_start(-2*i);
     }
 
-    list.insert(9999,0);
-    list.insert(9999,list.length()-1);
-    list.insert(9999,list.length()/2);
+    list.insert(999,0);
+    list.insert(999,list.length()-1);
+    list.insert(999,list.length()/2);
 
-    list.print();
-    std::cout<<"list.length= " << list.length() << "\n";
-    for(size_t i = 0; i<list.length(); i++)
+
+    std::cout<<"List length = " << list.length() << "\n";
+    list.print_values();
+
+    size_t oldListLength = list.length();
+    for(size_t i = 0; i<oldListLength-2; i++)
     {
-        std::cout<<"list["<<i<<"]="<<list.access(i)<<"\n";
+        list.delete_at(1);
     }
+    std::cout<<"List length = " << list.length() << "\n";
+    list.print_values();
 
-    
 
 
 }
