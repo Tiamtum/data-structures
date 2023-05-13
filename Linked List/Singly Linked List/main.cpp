@@ -49,10 +49,27 @@ int main()
     list1.print_list();
     std::cout<<"=List2=\n";
     list2.print_list();
-    std::cout<<"list1=list2\n";
-    list1=list2;
-    list1.print_list();
+    // std::cout<<"list1=list2\n";
+    // list1=list2;
+    // list1.print_list();
 
+    SinglyLinkedList<int> list3(std::move(list1)); //move constructed list; equivalent to SinglyLinkedList<int> list3 = std::move(list1);
+    std::cout<<"=List3=\n";
+    list3.print_list();
+
+
+    SinglyLinkedList<int> list4(1000);
+    list4.add_to_end(123);
+    list4.add_to_end(123);
+    list4.add_to_end(123);
+
+    std::cout<<"=List4 pre move assignment=\n";
+    list4.print_list();
+
+    list4 = std::move(list2); //move assignment operator invokes on already constructed objects
+
+    std::cout<<"=List4 post move assignment=\n";
+    list4.print_list();
 
 
 }
