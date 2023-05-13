@@ -2,15 +2,21 @@
 #define LINKEDLIST_H
 
 #include "Node.hpp"
+//Rule of three: If a class requires a user-defined destructor, a user-defined 
+//copy constructor, or a user-defined copy assignment operator, it almost certainly
+//requires all three. 
 
 template <typename T>
 class SinglyLinkedList
 {
     public:
-    SinglyLinkedList() = delete;
-    SinglyLinkedList(T value);
-    SinglyLinkedList(const SinglyLinkedList& list);
-    ~SinglyLinkedList();
+    SinglyLinkedList() = delete;   
+    explicit SinglyLinkedList(T value);      
+    SinglyLinkedList(const SinglyLinkedList& list); //copy constructor (initialize a previously uninitialized list from some other list's data. )
+    SinglyLinkedList& operator=(const SinglyLinkedList& list); //copy assignment (replace the data of a previously initialized list with some other list's data. )
+    ~SinglyLinkedList();    //destructor
+
+
 
     void add_to_end(T value);
     void add_to_start(T value);
@@ -55,7 +61,132 @@ SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list)
     m_head->value = originalCurrent->value; 
     m_head->next = nullptr;
 
-    originalCurrent = originalCurrent->next; //step one ahead
+    originalCurrent = originalCurrent->next; //step one ahead in original
+
+    Node<T> * temp=nullptr;
+    Node<T> * current = m_head;
+
+    while(originalCurrent->next)
+    {
+        Node<T> * tail = new Node<T>;
+        if(!(m_head->next)) //first node case
+        {
+            m_head->next = tail;
+            tail->next = nullptr;
+        }
+        if(temp) //temp is set such that it is a pointer to the previous iterations node
+        {
+            temp->next = tail;
+            temp = tail;
+            tail->value = originalCurrent->value;
+            tail->next = nullptr;
+            originalCurrent=originalCurrent->next;            
+        }
+        else //initial tail case (length = 2)
+        {
+        tail->value = originalCurrent->value;
+        temp = tail;
+        originalCurrent=originalCurrent->next;            
+        }
+    }
+    Node<T> * end = new Node<T>;
+    temp->next = end;
+    end->next = nullptr;
+    end->value = originalCurrent->value;
+}
+
+template <typename T>
+SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& list)
+{
+    if(this == &list) //assigning to itself 
+    {
+        return *this;
+    }
+    
+    Node<T> * thisList = this->m_head;
+    const Node<T> * otherList = list.m_head;
+
+    if(this->length() == list.length()) //lists are equal in length, no new allocations required just replace the values
+    {
+        while(thisList->next)
+        {
+            thisList->value = otherList->value;
+            thisList = thisList->next;
+            otherList = otherList->next;
+        }
+
+        thisList->value = otherList->value;
+        return *this;
+    }
+    else if(this->length() < list.length()) //list is smaller than what we want to assign, replace values and allocate nodes
+    {
+        while(thisList->next) //walk smaller list to it's end, replace values
+        {
+            thisList->value = otherList->value;
+            otherList = otherList->next;
+            thisList = thisList->next;
+        }
+
+        thisList->value = otherList->value;
+        otherList = otherList->next;
+        Node<T> * temp = nullptr;
+
+        while(otherList->next) //walk larger list from where it left off, allocate new nodes and fill with values from it
+        {
+            if(!temp)
+            {
+                Node<T> * newTail = new Node<T>;    //create a new node
+                temp = newTail;                     //point to it
+                thisList->next = newTail;           //link where we left off to the start of the new nodes
+                newTail->value = otherList->value;  //populate the new node
+                newTail->next = nullptr;
+                otherList = otherList->next;        //increment to next node in other list
+            }
+            else
+            {
+                Node<T> * newTail = new Node<T>;    //create a new node
+                temp->next = newTail;               //link the previous iterations node to it
+                temp = newTail;                     //set temp to poiint to the new node for next iteration
+                newTail->value = otherList->value;  //populate node
+                newTail->next = nullptr;
+                otherList = otherList->next;        //increment to next node in other list
+            }  
+        }
+
+        Node<T> * end = new Node<T>;                //create final node
+        temp->next = end;                           //link node from final iteration to it
+        end->value = otherList->value;              //populate node
+        end->next = nullptr;
+        return *this;
+    }
+    else if(this->length() > list.length()) //list is greater than what we want to assign, replace values and deallocate nodes
+    {
+        while(otherList->next)                  //walk the smaller list and replace larger list values with its values
+        {
+            thisList->value = otherList->value;
+            otherList = otherList->next;
+            thisList = thisList->next;
+        }
+
+        thisList->value = otherList->value;
+        Node<T> * leftOverNode = thisList->next;
+        thisList->next = nullptr;
+        
+        while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
+        {
+            Node<T> * temp = leftOverNode;
+            leftOverNode = leftOverNode->next;
+            delete temp;
+        }
+
+        delete leftOverNode;
+        return *this;
+    }
+    else
+    {
+        std::cout<<"Error in operator=\n";
+        exit(EXIT_FAILURE);
+    }
 }
 
 template <typename T>
