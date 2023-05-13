@@ -11,22 +11,19 @@ class SinglyLinkedList
 {
     public:
     SinglyLinkedList() = delete;   
-    explicit SinglyLinkedList(T value);      
-    SinglyLinkedList(const SinglyLinkedList& list); //copy constructor (initialize a previously uninitialized list from some other list's data. )
-    SinglyLinkedList& operator=(const SinglyLinkedList& list); //copy assignment (replace the data of a previously initialized list with some other list's data. )
-    ~SinglyLinkedList();    //destructor
-
-
+    explicit SinglyLinkedList(T value) noexcept;      
+    SinglyLinkedList(const SinglyLinkedList& list) noexcept;        //copy constructor (initialize a previously uninitialized list from some other list's data. )
+    SinglyLinkedList& operator=(const SinglyLinkedList& list);      //copy assignment (replace the data of a previously initialized list with some other list's data. )
+    SinglyLinkedList(SinglyLinkedList&& list) noexcept;             //move constructor
+    SinglyLinkedList& operator=(SinglyLinkedList&& list) noexcept;  //move assignment
+    ~SinglyLinkedList();                                            //destructor
 
     void add_to_end(T value);
     void add_to_start(T value);
     void insert(T value, size_t index);
-
     void delete_end();
     void delete_start();
     void delete_at(size_t index);
-
-    
 
     T access(size_t index) const;
     void print_list() const; 
@@ -38,8 +35,9 @@ class SinglyLinkedList
     Node<T> * m_head;
 };
 
+//Constructor
 template <typename T>
-SinglyLinkedList<T>::SinglyLinkedList(T value)
+SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
 {
     m_head = new Node<T>;
     m_head->value = value;
@@ -47,9 +45,9 @@ SinglyLinkedList<T>::SinglyLinkedList(T value)
     m_listLength++;
     std::cout<<"list created: " << m_head << "\n";
 }
-
+//Copy Constructor
 template <typename T>
-SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list) 
+SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list) noexcept 
 :m_listLength(list.m_listLength)
 {
     m_head = new Node<T>;         //copying list.m_head directly wont work since when one list object falls out of scope, the other(s) copy(s)
@@ -94,7 +92,7 @@ SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list)
     end->next = nullptr;
     end->value = originalCurrent->value;
 }
-
+//Copy assignment operator
 template <typename T>
 SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& list)
 {
@@ -102,7 +100,7 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
     {
         return *this;
     }
-    
+
     Node<T> * thisList = this->m_head;
     const Node<T> * otherList = list.m_head;
 
@@ -188,19 +186,68 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
         exit(EXIT_FAILURE);
     }
 }
-
-template <typename T>
-SinglyLinkedList<T>::~SinglyLinkedList()
+//Move constructor
+template<typename T>
+SinglyLinkedList<T>::SinglyLinkedList(SinglyLinkedList&& list) noexcept
+ :m_head(list.m_head),m_listLength(list.m_listLength)   //'rewire' m_head to point to list.m_head location
 {
-    std::cout<<"destructor called\n";
+    list.m_head= nullptr;
+    list.m_listLength = 0;   
+} 
+//Move assignment operator               
+template<typename T>
+SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noexcept
+{
+    if(this == &list) //moving in to itself 
+    {
+        return *this;
+    }
+    
+    //Delete current data to prepare to move to new data
     Node<T> * current = m_head;
     while(current->next)
     {
         Node<T> * temp = current;
-        current = current->next;
+        current=current->next;
         delete temp;
-    }
+    } 
     delete current;
+    
+    m_head = list.m_head;
+    m_listLength = list.m_listLength;
+    list.m_head= nullptr;
+    list.m_listLength = 0;  
+    return *this;
+
+    // list.m_listLength = 0;
+    // list.m_head = nullptr;
+    // return *this;
+}
+
+//Destructor
+template <typename T>
+SinglyLinkedList<T>::~SinglyLinkedList()
+{   
+    std::cout<<"===destructor called===\n";
+    Node<T> * current = m_head;
+    if(!current)    //if list is initialized by move constructor, the moved-from list's m_head points to nullptr and has to be dealt with on its own
+    {
+        std::cout<<"current=nullptr\n";
+        delete current;
+    }
+    else
+    {
+        while(current->next)
+        {
+            Node<T> * temp = current;
+            std::cout<<"to be deleted: " << temp->value << ", " << temp->next << "\n";
+            current = current->next;
+            delete temp;
+        }
+        std::cout<<"to be deleted: " << current->value << ", " << current->next << "\n";
+
+        delete current;        
+    }
 }
 
 template <typename T>
@@ -315,6 +362,7 @@ void SinglyLinkedList<T>::delete_start()
         m_listLength--;
     }
 }
+
 template <typename T>
 void SinglyLinkedList<T>::delete_at(size_t index)
 {   
