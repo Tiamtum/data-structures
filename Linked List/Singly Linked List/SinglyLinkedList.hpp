@@ -1,10 +1,13 @@
-#ifndef LINKEDLIST_H
-#define LINKEDLIST_H
+#ifndef SINGLYLINKEDLIST_H
+#define SINGLYLINKEDLIST_H
 
 #include "Node.hpp"
 //Rule of three: If a class requires a user-defined destructor, a user-defined 
 //copy constructor, or a user-defined copy assignment operator, it almost certainly
 //requires all three. 
+//Rule of five:  Because the presence of a user-defined (or = default or = delete declared) destructor, 
+//copy-constructor, or copy-assignment operator prevents implicit definition of the move constructor and 
+//the move assignment operator, any class for which move semantics are desirable, has to declare all five special member functions.
 
 template <typename T>
 class SinglyLinkedList
@@ -12,11 +15,11 @@ class SinglyLinkedList
     public:
     SinglyLinkedList() = delete;   
     explicit SinglyLinkedList(T value) noexcept;      
-    SinglyLinkedList(const SinglyLinkedList& list) noexcept;        //copy constructor (initialize a previously uninitialized list from some other list's data. )
-    SinglyLinkedList& operator=(const SinglyLinkedList& list);      //copy assignment (replace the data of a previously initialized list with some other list's data. )
-    SinglyLinkedList(SinglyLinkedList&& list) noexcept;             //move constructor
-    SinglyLinkedList& operator=(SinglyLinkedList&& list) noexcept;  //move assignment
-    ~SinglyLinkedList();                                            //destructor
+    SinglyLinkedList(const SinglyLinkedList& list) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
+    SinglyLinkedList& operator=(const SinglyLinkedList& list) noexcept; //copy assignment (replace the data of a previously initialized list with some other list's data. )
+    SinglyLinkedList(SinglyLinkedList&& list) noexcept;                 //move constructor
+    SinglyLinkedList& operator=(SinglyLinkedList&& list) noexcept;      //move assignment
+    ~SinglyLinkedList();                                                //destructor
 
     void add_to_end(T value);
     void add_to_start(T value);
@@ -94,7 +97,7 @@ SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list) noexcept
 }
 //Copy assignment operator
 template <typename T>
-SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& list)
+SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& list) noexcept
 {
     if(this == &list) //assigning to itself 
     {
@@ -218,12 +221,7 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noe
     list.m_head= nullptr;
     list.m_listLength = 0;  
     return *this;
-
-    // list.m_listLength = 0;
-    // list.m_head = nullptr;
-    // return *this;
 }
-
 //Destructor
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
