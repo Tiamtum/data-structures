@@ -8,7 +8,7 @@ $(TARGET): $(OBJFILES) $(DEPS)
 	$(CC) $(CFLAGS) $(OBJFILES) -o $(TARGET)
 
 main.o: main.cpp $(DEPS)
-	$(CC) $(CFLAGS) -c -g main.cpp
+	$(CC) $(CFLAGS) -c -g -fconcepts main.cpp
 
 clean:
 	rm *.o $(TARGET) cachegrind.out.*
