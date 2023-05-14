@@ -9,6 +9,9 @@
 //copy-constructor, or copy-assignment operator prevents implicit definition of the move constructor and 
 //the move assignment operator, any class for which move semantics are desirable, has to declare all five special member functions.
 
+// template<typename T>
+// concept isNumber = std::is_arithmetic<T>::value;
+
 template <typename T>
 class SinglyLinkedList
 {
@@ -28,6 +31,8 @@ class SinglyLinkedList
     void delete_start();
     void delete_at(size_t index);
 
+    void swap(size_t index1, size_t index2);
+    void sort() requires std::is_arithmetic<T>::value;
     T access(size_t index) const;
     void print_list() const; 
     void print_values() const;
@@ -46,7 +51,6 @@ SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
     m_head->value = value;
     m_head->next = nullptr;
     m_listLength++;
-    std::cout<<"list created: " << m_head << "\n";
 }
 //Copy Constructor
 template <typename T>
@@ -226,11 +230,10 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noe
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {   
-    std::cout<<"===destructor called===\n";
+    // std::cout<<"===destructor called===\n";
     Node<T> * current = m_head;
     if(!current)    //if list is initialized by move constructor, the moved-from list's m_head points to nullptr and has to be dealt with on its own
     {
-        std::cout<<"current=nullptr\n";
         delete current;
     }
     else
@@ -238,11 +241,11 @@ SinglyLinkedList<T>::~SinglyLinkedList()
         while(current->next)
         {
             Node<T> * temp = current;
-            std::cout<<"to be deleted: " << temp->value << ", " << temp->next << "\n";
+            // std::cout<<"to be deleted: " << temp->value << ", " << temp->next << "\n";
             current = current->next;
             delete temp;
         }
-        std::cout<<"to be deleted: " << current->value << ", " << current->next << "\n";
+        // std::cout<<"to be deleted: " << current->value << ", " << current->next << "\n";
 
         delete current;        
     }
@@ -400,6 +403,34 @@ void SinglyLinkedList<T>::delete_at(size_t index)
         std::cout<<"Out of bounds index for delete_at().\n";
         exit(EXIT_FAILURE);        
     }
+}
+
+template<typename T>
+void SinglyLinkedList<T>::swap(size_t index1, size_t index2)
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+
+    while(i<index1)
+    {
+        current = current->next;
+        i++;
+    }
+    Node<T> * index1Node = current;
+    T value1 = current->value;
+    while(i<index2) 
+    {
+        current = current->next;
+        i++;
+    }
+    index1Node->value = current->value;
+    current->value = value1;
+}
+
+template<typename T>
+void SinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
+{
+
 }
 
 template<typename T>
