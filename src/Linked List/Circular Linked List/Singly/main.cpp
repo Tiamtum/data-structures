@@ -21,5 +21,7 @@ float randFloat(int from, int to)
 int main() 
 {
 
+    SinglyCircularLinkedList<SinglyCircularLinkedList<int>> bigList(SinglyCircularLinkedList<int>(0));
+    bigList.print_list();
 
 }
