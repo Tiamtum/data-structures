@@ -7,7 +7,7 @@ template <typename T>
 class SinglyLinkedList
 {
     public:
-    SinglyLinkedList() = delete; //handle empty list?
+    SinglyLinkedList() = delete; //handle empty case at some point
     explicit SinglyLinkedList(T value) noexcept;
     explicit SinglyLinkedList(std::initializer_list<T> values) noexcept;      
     SinglyLinkedList(const SinglyLinkedList& list) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
@@ -36,7 +36,7 @@ class SinglyLinkedList
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;
     Node<T> * walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const;
-    size_t m_listLength=0;
+    size_t m_listLength = 0;
     Node<T> * m_head;
 };
 
