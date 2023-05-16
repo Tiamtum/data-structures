@@ -360,6 +360,7 @@ void SinglyLinkedList<T>::delete_end()
     if(m_listLength == 1)
     {
         std::cout<<"Error: List consists of a single node.\n";
+        delete m_head;
         exit(EXIT_FAILURE);
     }
     else
@@ -387,6 +388,7 @@ void SinglyLinkedList<T>::delete_start()
     if(m_listLength == 1)
     {
         std::cout<<"Error: List consists of a single node.\n";
+        delete m_head;
         exit(EXIT_FAILURE);
     }
     else
@@ -404,6 +406,7 @@ void SinglyLinkedList<T>::delete_at(size_t index)
     if(m_listLength == 1)
     {
         std::cout<<"Error: List consists of a single node.\n";
+        delete m_head;
         exit(EXIT_FAILURE);
     }
     else if(index == 0)
