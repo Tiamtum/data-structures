@@ -2,18 +2,12 @@
 #define SINGLYLINKEDLIST_H
 
 #include "Node.hpp"
-//Rule of three: If a class requires a user-defined destructor, a user-defined 
-//copy constructor, or a user-defined copy assignment operator, it almost certainly
-//requires all three. 
-//Rule of five:  Because the presence of a user-defined (or = default or = delete declared) destructor, 
-//copy-constructor, or copy-assignment operator prevents implicit definition of the move constructor and 
-//the move assignment operator, any class for which move semantics are desirable, has to declare all five special member functions.
 
 template <typename T>
 class SinglyLinkedList
 {
     public:
-    SinglyLinkedList() = delete;   
+    SinglyLinkedList() = delete; //handle empty list?
     explicit SinglyLinkedList(T value) noexcept;
     explicit SinglyLinkedList(std::initializer_list<T> values) noexcept;      
     SinglyLinkedList(const SinglyLinkedList& list) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
@@ -76,7 +70,7 @@ SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
     m_head->next = nullptr;
     m_listLength++;
 }
-//Constructor - Initilizer list of values
+//Constructor - Initializer list of values
 template<typename T>
 SinglyLinkedList<T>::SinglyLinkedList(std::initializer_list<T> values) noexcept
 {
@@ -91,7 +85,7 @@ SinglyLinkedList<T>::SinglyLinkedList(std::initializer_list<T> values) noexcept
         }                
         else
         {
-            this->add_to_end(value);
+            add_to_end(value);
         }
     }
 }
@@ -332,7 +326,7 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
 {
     if(index == 0)
     {
-        this->add_to_start(value);
+        add_to_start(value);
     }
     else if(index > 0 && index <= m_listLength-1)
     {
@@ -414,11 +408,11 @@ void SinglyLinkedList<T>::delete_at(size_t index)
     }
     else if(index == 0)
     {
-        this->delete_start();
+        delete_start();
     }
     else if(index == m_listLength-1)
     {
-        this->delete_end();
+        delete_end();
     }
     else if(index > 0 && index < m_listLength-1)
     {
@@ -472,7 +466,7 @@ void SinglyLinkedList<T>::swap_values(size_t index1, size_t index2)
 
     if(index1>index2)
     {
-        std::swap(index1,index2);
+        std::swap(index1,index2); //why not just do this for the values?
     }
 
     Node<T> * current = m_head;
@@ -492,7 +486,19 @@ void SinglyLinkedList<T>::swap_values(size_t index1, size_t index2)
 template<typename T>
 void SinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 {
-    std::cout<<"hi\n";
+    //Insertion sort
+    size_t i = 2;
+    while(i < m_listLength+1)
+    {
+        size_t j = i-1;
+        while(j>0 && access(j-1)>access(j))
+        {
+            swap_values(j-1,j);
+            j--;
+        }
+        i++;
+    }
+
 }
 
 template<typename T>
@@ -519,9 +525,9 @@ void SinglyLinkedList<T>::print_list() const
 template<typename T>
 void SinglyLinkedList<T>::print_values() const
 {
-    for(size_t i = 0; i < this->length(); i++)
+    for(size_t i = 0; i < length(); i++)
     {
-        std::cout<<"["<<i<<"] = " << this->access(i) << "\n";
+        std::cout<<"["<<i<<"] = " << access(i) << "\n";
     }
 }
 
