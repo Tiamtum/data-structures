@@ -20,5 +20,8 @@ float randFloat(int from, int to)
 
 int main() 
 {
-
+    SinglyLinkedList<int> list({1,2,3,4,5});
+    SinglyLinkedList<int> list2({6,6,6,6,6,6,6,6,6});
+    list2=list;
+    std::cout<<list2;
 }
