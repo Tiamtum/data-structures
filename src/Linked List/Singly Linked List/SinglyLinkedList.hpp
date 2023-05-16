@@ -1,7 +1,9 @@
 #ifndef SINGLYLINKEDLIST_H
 #define SINGLYLINKEDLIST_H
 
+#include <iostream>
 #include "Node.hpp"
+//REFACTOR: See what you did in SinglyCicularLinkedList.hpp
 
 template <typename T>
 class SinglyLinkedList
@@ -10,10 +12,10 @@ class SinglyLinkedList
     SinglyLinkedList() = delete; //handle empty case at some point
     explicit SinglyLinkedList(T value) noexcept;
     explicit SinglyLinkedList(std::initializer_list<T> values) noexcept;      
-    SinglyLinkedList(const SinglyLinkedList& list) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
-    SinglyLinkedList& operator=(const SinglyLinkedList& list) noexcept; //copy assignment (replace the data of a previously initialized list with some other list's data. )
-    SinglyLinkedList(SinglyLinkedList&& list) noexcept;                 //move constructor
-    SinglyLinkedList& operator=(SinglyLinkedList&& list) noexcept;      //move assignment
+    SinglyLinkedList(const SinglyLinkedList& other) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
+    SinglyLinkedList& operator=(const SinglyLinkedList& other) noexcept; //copy assignment (replace the data of a previously initialized list with some other list's data. )
+    SinglyLinkedList(SinglyLinkedList&& other) noexcept;                 //move constructor
+    SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept;      //move assignment
     ~SinglyLinkedList();                                                //destructor
 
     void add_to_end(T value);
@@ -27,11 +29,13 @@ class SinglyLinkedList
     void swap_values(size_t index1, size_t index2);
     void sort() requires std::is_arithmetic<T>::value;
     T access(size_t index) const;
-    void print_list() const; 
     void print_values() const;
     T first_value() const;
     T last_value() const;
     size_t length() const;
+
+    template<typename U>
+    friend std::ostream& operator<<(std::ostream& os, const SinglyLinkedList<U>& other);
 
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;
@@ -91,50 +95,23 @@ SinglyLinkedList<T>::SinglyLinkedList(std::initializer_list<T> values) noexcept
 }
 //Copy Constructor
 template <typename T>
-SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& list) noexcept 
-:m_listLength(list.m_listLength)
+SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& other) noexcept 
+:m_listLength(other.m_listLength)
 {
-    m_head = new Node<T>;         //copying list.m_head directly wont work since when one list object falls out of scope, the other(s) copy(s)
-                                  //will not be able to destruct properly. hence new nodes must be created for each old node so
-                                  //they are in different memory locations
-
-    const Node<T> * originalCurrent = list.m_head; //const so cant change data. 'Node<T> * const originalCurrent' would not allow to change pointer
+    Node<T> * originalCurrent = other.m_head;
     
-    m_head->value = originalCurrent->value; 
+    m_head = new Node<T>;
+    m_head->value = originalCurrent->value;
     m_head->next = nullptr;
 
-    originalCurrent = originalCurrent->next; //step one ahead in original
-
-    Node<T> * temp=nullptr;
-    Node<T> * current = m_head;
-
+    originalCurrent = originalCurrent->next;
+    
     while(originalCurrent->next)
     {
-        Node<T> * tail = new Node<T>;
-        if(!(m_head->next)) //first node case
-        {
-            m_head->next = tail;
-            tail->next = nullptr;
-        }
-        if(temp) //temp is set such that it is a pointer to the previous iterations node
-        {
-            temp->next = tail;
-            temp = tail;
-            tail->value = originalCurrent->value;
-            tail->next = nullptr;
-            originalCurrent=originalCurrent->next;            
-        }
-        else //initial tail case (length = 2)
-        {
-        tail->value = originalCurrent->value;
-        temp = tail;
-        originalCurrent=originalCurrent->next;            
-        }
+        add_to_end(originalCurrent->value);
+        originalCurrent=originalCurrent->next;
     }
-    Node<T> * end = new Node<T>;
-    temp->next = end;
-    end->next = nullptr;
-    end->value = originalCurrent->value;
+    add_to_end(originalCurrent->value);
 }
 //Copy assignment operator
 template <typename T>
@@ -171,34 +148,12 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
 
         thisList->value = otherList->value;
         otherList = otherList->next;
-        Node<T> * temp = nullptr;
-
-        while(otherList->next) //walk larger list from where it left off, allocate new nodes and fill with values from it
+        while(otherList->next)
         {
-            if(!temp)
-            {
-                Node<T> * newTail = new Node<T>;    //create a new node
-                temp = newTail;                     //point to it
-                thisList->next = newTail;           //link where we left off to the start of the new nodes
-                newTail->value = otherList->value;  //populate the new node
-                newTail->next = nullptr;
-                otherList = otherList->next;        //increment to next node in other list
-            }
-            else
-            {
-                Node<T> * newTail = new Node<T>;    //create a new node
-                temp->next = newTail;               //link the previous iterations node to it
-                temp = newTail;                     //set temp to poiint to the new node for next iteration
-                newTail->value = otherList->value;  //populate node
-                newTail->next = nullptr;
-                otherList = otherList->next;        //increment to next node in other list
-            }  
+            add_to_end(otherList->value);
+            otherList = otherList->next;
         }
-
-        Node<T> * end = new Node<T>;                //create final node
-        temp->next = end;                           //link node from final iteration to it
-        end->value = otherList->value;              //populate node
-        end->next = nullptr;
+        add_to_end(otherList->value);
         return *this;
     }
     else if(this->length() > list.length()) //list is greater than what we want to assign, replace values and deallocate nodes
@@ -267,7 +222,6 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noe
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {   
-    // std::cout<<"===destructor called===\n";
     Node<T> * current = m_head;
     if(!current)    //if list is initialized by move constructor, the moved-from list's m_head points to nullptr and has to be dealt with on its own
     {
@@ -278,12 +232,9 @@ SinglyLinkedList<T>::~SinglyLinkedList()
         while(current->next)
         {
             Node<T> * temp = current;
-            // std::cout<<"to be deleted: " << temp->value << ", " << temp->next << "\n";
             current = current->next;
             delete temp;
         }
-        // std::cout<<"to be deleted: " << current->value << ", " << current->next << "\n";
-
         delete current;        
     }
 }
@@ -514,18 +465,6 @@ T SinglyLinkedList<T>::access(size_t index) const
 }
 
 template<typename T>
-void SinglyLinkedList<T>::print_list() const 
-{
-    Node<T> * current = m_head;
-    while(current->next)
-    {
-        std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
-        current = current->next;
-    }
-    std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
-}
-
-template<typename T>
 void SinglyLinkedList<T>::print_values() const
 {
     for(size_t i = 0; i < length(); i++)
@@ -551,6 +490,19 @@ T SinglyLinkedList<T>::last_value() const
 template<typename T>
 size_t SinglyLinkedList<T>::length() const{
     return m_listLength;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const SinglyLinkedList<T>& other)
+{
+    Node<T> * current = other.m_head;
+    while(current->next)
+    {
+        os<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
+        current = current->next;
+    }
+    os<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
+    return os;
 }
 
 #endif 
