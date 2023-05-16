@@ -3,8 +3,6 @@
 
 #include "Node.hpp"
 
-//REFACTOR: See what you did in SinglyCicularLinkedList.hpp
-
 template<typename T>
 class SinglyCircularLinkedList
 {
