@@ -460,10 +460,9 @@ void SinglyCircularLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 template<typename T>
 T SinglyCircularLinkedList<T>::access(size_t index) const
 {
-    //Note: need to change to leverage the full circular nature of the list
-    //i.e. when you reach the final index and go beyond, you should appear at the start again.
     Node<T> * current = m_head;
     size_t i = 0;
+    index = index % m_listLength; //mod length to leverage the circular nature of the list 
     current = walk_list_between_indices(current,i,index);
     return current->value;
 }
