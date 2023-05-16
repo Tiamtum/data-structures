@@ -1,6 +1,7 @@
 #ifndef SINGLYCIRCULARLINKEDLIST_H
 #define SINGLYCIRCULARLINKEDLIST_H
 
+#include<iostream>
 #include "Node.hpp"
 
 template<typename T>
@@ -24,14 +25,16 @@ class SinglyCircularLinkedList
     void delete_at(size_t index);
 
     void replace_value(size_t index,T value);
-    void swap_values(size_t index1, size_t index2);//TODO
-    void sort() requires std::is_arithmetic<T>::value;//TODO
+    void swap_values(size_t index1, size_t index2);
+    void sort() requires std::is_arithmetic<T>::value;
     T access(size_t index) const;
-    void print_list() const; 
     void print_values() const;
     T first_value() const;
     T last_value() const;
     size_t length() const;
+
+    template<typename U>
+    friend std::ostream& operator<<(std::ostream& os, const SinglyCircularLinkedList<U>& other);
 
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;
@@ -468,18 +471,6 @@ T SinglyCircularLinkedList<T>::access(size_t index) const
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::print_list() const 
-{
-    Node<T> * current = m_head;
-    while(current->next != m_head)
-    {
-        std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
-        current = current->next;
-    }
-    std::cout<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
-}
-
-template<typename T>
 void SinglyCircularLinkedList<T>::print_values() const
 {
     for(size_t i = 0; i < length(); i++)
@@ -505,6 +496,19 @@ T SinglyCircularLinkedList<T>::last_value() const
 template<typename T>
 size_t SinglyCircularLinkedList<T>::length() const{
     return m_listLength;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const SinglyCircularLinkedList<T>& other)
+{
+    Node<T> * current = other.m_head;
+    while(current->next != other.m_head)
+    {
+        os<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
+        current = current->next;
+    }
+    os<<"Location: " << current << ", Value: " << current->value << ", Next: " << current->next << "\n";
+    return os;
 }
 
 #endif
