@@ -9,15 +9,13 @@
 //copy-constructor, or copy-assignment operator prevents implicit definition of the move constructor and 
 //the move assignment operator, any class for which move semantics are desirable, has to declare all five special member functions.
 
-// template<typename T>
-// concept isNumber = std::is_arithmetic<T>::value;
-
 template <typename T>
 class SinglyLinkedList
 {
     public:
     SinglyLinkedList() = delete;   
-    explicit SinglyLinkedList(T value) noexcept;      
+    explicit SinglyLinkedList(T value) noexcept;
+    explicit SinglyLinkedList(std::initializer_list<T> values) noexcept;      
     SinglyLinkedList(const SinglyLinkedList& list) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
     SinglyLinkedList& operator=(const SinglyLinkedList& list) noexcept; //copy assignment (replace the data of a previously initialized list with some other list's data. )
     SinglyLinkedList(SinglyLinkedList&& list) noexcept;                 //move constructor
@@ -31,19 +29,45 @@ class SinglyLinkedList
     void delete_start();
     void delete_at(size_t index);
 
-    void swap(size_t index1, size_t index2);
+    void replace_value(size_t index,T value);
+    void swap_values(size_t index1, size_t index2);
     void sort() requires std::is_arithmetic<T>::value;
     T access(size_t index) const;
     void print_list() const; 
     void print_values() const;
+    T first_value() const;
+    T last_value() const;
     size_t length() const;
 
     private:
+    Node<T> * walk_list_to_end(Node<T> * current) const;
+    Node<T> * walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const;
     size_t m_listLength=0;
     Node<T> * m_head;
 };
 
-//Constructor
+template<typename T>
+Node<T> * SinglyLinkedList<T>::walk_list_to_end(Node<T> * current) const
+{
+    while(current->next)
+    {
+        current = current->next;
+    }
+    return current;
+}
+template<typename T>
+Node<T> * SinglyLinkedList<T>::walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const
+{
+    while(start<end)
+    {
+        current=current->next;
+        start++;
+    }
+    return current;
+}
+
+
+//Constructor - Single value
 template <typename T>
 SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
 {
@@ -51,6 +75,25 @@ SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
     m_head->value = value;
     m_head->next = nullptr;
     m_listLength++;
+}
+//Constructor - Initilizer list of values
+template<typename T>
+SinglyLinkedList<T>::SinglyLinkedList(std::initializer_list<T> values) noexcept
+{
+    for(auto& value: values)
+    {
+        if(m_listLength==0)
+        {
+            m_head = new Node<T>;
+            m_head->value = value;
+            m_head->next = nullptr;
+            m_listLength++;
+        }                
+        else
+        {
+            this->add_to_end(value);
+        }
+    }
 }
 //Copy Constructor
 template <typename T>
@@ -265,10 +308,7 @@ void SinglyLinkedList<T>::add_to_end(T value)
     else
     {
         Node<T> * current = m_head;
-        while(current->next)
-        {
-            current = current->next;
-        }
+        current = walk_list_to_end(current);
         Node<T> * newTail = new Node<T>;
         current->next = newTail;
         newTail->value = value;
@@ -406,23 +446,45 @@ void SinglyLinkedList<T>::delete_at(size_t index)
 }
 
 template<typename T>
-void SinglyLinkedList<T>::swap(size_t index1, size_t index2)
+void SinglyLinkedList<T>::replace_value(size_t index, T value)
 {
+    if(index<0 || index>=m_listLength)
+    {
+        std::cout<<"Out of bounds index for replace_value().\n";
+        exit(EXIT_FAILURE);
+    }
+    size_t i = 0 ;
+    Node<T> * current = m_head;
+    current = walk_list_between_indices(current,i,index);
+    current->value = value;
+}
+
+template<typename T>
+void SinglyLinkedList<T>::swap_values(size_t index1, size_t index2)
+{
+    if(index1<0 || index2<0 || index1>=m_listLength || index2>=m_listLength)
+    {
+        std::cout<<"Out of bounds index for swap_values().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"swap_values() was given indices: index1="<<index1<<", index2="<<index2<<"\n";
+        exit(EXIT_FAILURE);
+    }
+
+    if(index1>index2)
+    {
+        std::swap(index1,index2);
+    }
+
     Node<T> * current = m_head;
     size_t i = 0;
 
-    while(i<index1)
-    {
-        current = current->next;
-        i++;
-    }
+    current = walk_list_between_indices(current,i,index1);
+
     Node<T> * index1Node = current;
     T value1 = current->value;
-    while(i<index2) 
-    {
-        current = current->next;
-        i++;
-    }
+
+    current = walk_list_between_indices(current,i,index2);
+
     index1Node->value = current->value;
     current->value = value1;
 }
@@ -430,7 +492,7 @@ void SinglyLinkedList<T>::swap(size_t index1, size_t index2)
 template<typename T>
 void SinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 {
-
+    std::cout<<"hi\n";
 }
 
 template<typename T>
@@ -438,11 +500,7 @@ T SinglyLinkedList<T>::access(size_t index) const
 {
     Node<T> * current = m_head;
     size_t i = 0;
-    while(i<index)
-    {
-        current = current->next;
-        i++;
-    }
+    current = walk_list_between_indices(current,i,index);
     return current->value;
 }
 
@@ -465,6 +523,20 @@ void SinglyLinkedList<T>::print_values() const
     {
         std::cout<<"["<<i<<"] = " << this->access(i) << "\n";
     }
+}
+
+template<typename T>
+T SinglyLinkedList<T>::first_value() const
+{
+    return m_head->value;
+}
+
+template<typename T>
+T SinglyLinkedList<T>::last_value() const
+{
+    Node<T> * current = m_head;
+    current = walk_list_to_end();
+    return current->value;
 }
 
 template<typename T>
