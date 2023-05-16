@@ -20,13 +20,6 @@ float randFloat(int from, int to)
 
 int main() 
 {
-    SinglyCircularLinkedList<int> list0({10,9,8,7,6,5,4,3,2,1,0});
-    std::cout<<"list0:\n";
-    list0.print_list();
-    std::cout<<"sorted:\n";
-    list0.sort();
-    list0.print_list();
-
 
 
 }
