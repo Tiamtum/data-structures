@@ -20,5 +20,5 @@ float randFloat(int from, int to)
 
 int main() 
 {
-    SinglyLinkedList<int> list{1,2,3};
+
 }
