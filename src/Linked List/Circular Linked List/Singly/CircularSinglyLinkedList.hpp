@@ -178,6 +178,7 @@ CircularSinglyLinkedList<T>& CircularSinglyLinkedList<T>::operator=(const Circul
     else
     {
         std::cout<<"Error in operator=\n";
+        return *this=nullptr; //not sure about this
     }
 
 }
@@ -234,7 +235,6 @@ CircularSinglyLinkedList<T>::~CircularSinglyLinkedList()
     }
 }
 
-
 template<typename T>
 bool CircularSinglyLinkedList<T>::operator==(const CircularSinglyLinkedList& other) noexcept
 {
@@ -254,7 +254,6 @@ bool CircularSinglyLinkedList<T>::operator==(const CircularSinglyLinkedList& oth
     }
     return true;
 }
-
 
 template<typename T>
 void CircularSinglyLinkedList<T>::add_to_end(T value)
