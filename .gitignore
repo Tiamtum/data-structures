@@ -2,3 +2,4 @@
 program
 .vscode/
 cachegrind.out.*
+structureTests
