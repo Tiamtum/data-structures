@@ -17,6 +17,8 @@ class SinglyCircularLinkedList
     SinglyCircularLinkedList& operator=(SinglyCircularLinkedList&& other) noexcept;     
     ~SinglyCircularLinkedList();                             
 
+    bool operator==(const SinglyCircularLinkedList& other) noexcept;
+
     void add_to_end(T value);
     void add_to_start(T value);
     void insert(T value, size_t index);
@@ -232,6 +234,28 @@ SinglyCircularLinkedList<T>::~SinglyCircularLinkedList()
         delete current;        
     }
 }
+
+
+template<typename T>
+bool SinglyCircularLinkedList<T>::operator==(const SinglyCircularLinkedList& other) noexcept
+{
+    Node<T> * current = m_head;
+    Node<T> * otherCurrent = other.m_head;
+    while(current->next != m_head)
+    {
+        if(current->value == otherCurrent->value)
+        {
+            current=current->next;
+            otherCurrent=otherCurrent->next;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 template<typename T>
 void SinglyCircularLinkedList<T>::add_to_end(T value)
