@@ -123,68 +123,65 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
     {
         return *this;
     }
-
-    Node<T> * thisList = this->m_head;
-    const Node<T> * otherList = list.m_head;
-
-    if(this->length() == list.length()) //lists are equal in length, no new allocations required just replace the values
-    {
-        while(thisList->next)
-        {
-            thisList->value = otherList->value;
-            thisList = thisList->next;
-            otherList = otherList->next;
-        }
-
-        thisList->value = otherList->value;
-        return *this;
-    }
-    else if(this->length() < list.length()) //list is smaller than what we want to assign, replace values and allocate nodes
-    {
-        while(thisList->next) //walk smaller list to it's end, replace values
-        {
-            thisList->value = otherList->value;
-            otherList = otherList->next;
-            thisList = thisList->next;
-        }
-
-        thisList->value = otherList->value;
-        otherList = otherList->next;
-        while(otherList->next)
-        {
-            add_to_end(otherList->value);
-            otherList = otherList->next;
-        }
-        add_to_end(otherList->value);
-        return *this;
-    }
-    else if(this->length() > list.length()) //list is greater than what we want to assign, replace values and deallocate nodes
-    {
-        while(otherList->next)                  //walk the smaller list and replace larger list values with its values
-        {
-            thisList->value = otherList->value;
-            otherList = otherList->next;
-            thisList = thisList->next;
-        }
-
-        thisList->value = otherList->value;
-        Node<T> * leftOverNode = thisList->next;
-        thisList->next = nullptr;
-        
-        while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
-        {
-            Node<T> * temp = leftOverNode;
-            leftOverNode = leftOverNode->next;
-            delete temp;
-        }
-
-        delete leftOverNode;
-        return *this;
-    }
     else
     {
-        std::cout<<"Error in operator=\n";
-        return *this=nullptr; //not sure about this
+        Node<T> * thisList = this->m_head;
+        const Node<T> * otherList = list.m_head;
+
+        if(this->length() == list.length()) //lists are equal in length, no new allocations required just replace the values
+        {
+            while(thisList->next)
+            {
+                thisList->value = otherList->value;
+                thisList = thisList->next;
+                otherList = otherList->next;
+            }
+
+            thisList->value = otherList->value;
+            return *this;
+        }
+        else if(this->length() < list.length()) //list is smaller than what we want to assign, replace values and allocate nodes
+        {
+            while(thisList->next) //walk smaller list to it's end, replace values
+            {
+                thisList->value = otherList->value;
+                otherList = otherList->next;
+                thisList = thisList->next;
+            }
+
+            thisList->value = otherList->value;
+            otherList = otherList->next;
+            while(otherList->next)
+            {
+                add_to_end(otherList->value);
+                otherList = otherList->next;
+            }
+            add_to_end(otherList->value);
+            return *this;
+        }
+        else //(this->length() > list.length()) //list is greater than what we want to assign, replace values and deallocate nodes
+        {
+            while(otherList->next)                  //walk the smaller list and replace larger list values with its values
+            {
+                thisList->value = otherList->value;
+                otherList = otherList->next;
+                thisList = thisList->next;
+            }
+
+            thisList->value = otherList->value;
+            Node<T> * leftOverNode = thisList->next;
+            thisList->next = nullptr;
+            
+            while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
+            {
+                Node<T> * temp = leftOverNode;
+                leftOverNode = leftOverNode->next;
+                delete temp;
+            }
+
+            delete leftOverNode;
+            return *this;
+        }
     }
 }
 //Move constructor
