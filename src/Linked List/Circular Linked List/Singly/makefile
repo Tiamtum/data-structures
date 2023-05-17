@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -I -Wall -Wextra -pedantic-errors
 OBJFILES = main.o
-DEPS = SinglyCircularLinkedList.hpp Node.hpp
+DEPS = CircularSinglyLinkedList.hpp Node.hpp
 TARGET = program 
 
 $(TARGET): $(OBJFILES) $(DEPS)

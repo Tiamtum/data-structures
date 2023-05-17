@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <random>
-#include "./SinglyCircularLinkedList.hpp"
+#include "./CircularSinglyLinkedList.hpp"
 
 int randInt(int from, int to)
 {    
@@ -21,6 +21,6 @@ float randFloat(int from, int to)
 int main() 
 {
 
-    SinglyCircularLinkedList<int> list({1,2,3,4,5,6,7,8,9});
+    CircularSinglyLinkedList<int> list({1,2,3,4,5,6,7,8,9});
     std::cout<<list;
 }

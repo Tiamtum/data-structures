@@ -1,23 +1,23 @@
-#ifndef SINGLYCIRCULARLINKEDLIST_H
-#define SINGLYCIRCULARLINKEDLIST_H
+#ifndef CIRCULARSINGLYLINKEDLIST_H
+#define CIRCULARSINGLYLINKEDLIST_H
 
-#include<iostream>
+#include <iostream>
 #include "Node.hpp"
 
 template<typename T>
-class SinglyCircularLinkedList
+class CircularSinglyLinkedList
 {
     public:
-    SinglyCircularLinkedList() = delete; 
-    explicit SinglyCircularLinkedList(T value) noexcept; 
-    explicit SinglyCircularLinkedList(std::initializer_list<T> values) noexcept;
-    SinglyCircularLinkedList(const SinglyCircularLinkedList& other) noexcept;           
-    SinglyCircularLinkedList& operator=(const SinglyCircularLinkedList& other) noexcept; 
-    SinglyCircularLinkedList(SinglyCircularLinkedList&& other) noexcept;                
-    SinglyCircularLinkedList& operator=(SinglyCircularLinkedList&& other) noexcept;     
-    ~SinglyCircularLinkedList();                             
+    CircularSinglyLinkedList() = delete; 
+    explicit CircularSinglyLinkedList(T value) noexcept; 
+    explicit CircularSinglyLinkedList(std::initializer_list<T> values) noexcept;
+    CircularSinglyLinkedList(const CircularSinglyLinkedList& other) noexcept;           
+    CircularSinglyLinkedList& operator=(const CircularSinglyLinkedList& other) noexcept; 
+    CircularSinglyLinkedList(CircularSinglyLinkedList&& other) noexcept;                
+    CircularSinglyLinkedList& operator=(CircularSinglyLinkedList&& other) noexcept;     
+    ~CircularSinglyLinkedList();                             
 
-    bool operator==(const SinglyCircularLinkedList& other) noexcept;
+    bool operator==(const CircularSinglyLinkedList& other) noexcept;
 
     void add_to_end(T value);
     void add_to_start(T value);
@@ -36,7 +36,7 @@ class SinglyCircularLinkedList
     size_t length() const;
 
     template<typename U>
-    friend std::ostream& operator<<(std::ostream& os, const SinglyCircularLinkedList<U>& other);
+    friend std::ostream& operator<<(std::ostream& os, const CircularSinglyLinkedList<U>& other);
 
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;
@@ -46,7 +46,7 @@ class SinglyCircularLinkedList
 };
 
 template<typename T>
-Node<T> * SinglyCircularLinkedList<T>::walk_list_to_end(Node<T> * current) const
+Node<T> * CircularSinglyLinkedList<T>::walk_list_to_end(Node<T> * current) const
 {
     while(current->next != m_head)
     {
@@ -56,7 +56,7 @@ Node<T> * SinglyCircularLinkedList<T>::walk_list_to_end(Node<T> * current) const
 }
 
 template<typename T>
-Node<T> * SinglyCircularLinkedList<T>::walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const
+Node<T> * CircularSinglyLinkedList<T>::walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const
 {
     while(start<end)
     {
@@ -67,7 +67,7 @@ Node<T> * SinglyCircularLinkedList<T>::walk_list_between_indices(Node<T> * curre
 }
 //Constructor - Single value
 template<typename T>
-SinglyCircularLinkedList<T>::SinglyCircularLinkedList(T value) noexcept
+CircularSinglyLinkedList<T>::CircularSinglyLinkedList(T value) noexcept
 {
     m_head = new Node<T>;
     m_head->value = value;
@@ -76,7 +76,7 @@ SinglyCircularLinkedList<T>::SinglyCircularLinkedList(T value) noexcept
 }
 //Constructor - Initializer list of values
 template<typename T>
-SinglyCircularLinkedList<T>::SinglyCircularLinkedList(std::initializer_list<T> values) noexcept
+CircularSinglyLinkedList<T>::CircularSinglyLinkedList(std::initializer_list<T> values) noexcept
 {
     for(auto& value: values)
     {
@@ -95,7 +95,7 @@ SinglyCircularLinkedList<T>::SinglyCircularLinkedList(std::initializer_list<T> v
 }
 //Copy Constructor
 template<typename T>
-SinglyCircularLinkedList<T>::SinglyCircularLinkedList(const SinglyCircularLinkedList& other) noexcept 
+CircularSinglyLinkedList<T>::CircularSinglyLinkedList(const CircularSinglyLinkedList& other) noexcept 
 :m_listLength(other.m_listLength)
 {
     Node<T> * originalCurrent = other.m_head;
@@ -115,7 +115,7 @@ SinglyCircularLinkedList<T>::SinglyCircularLinkedList(const SinglyCircularLinked
 }
 //Copy assignment operator
 template<typename T>
-SinglyCircularLinkedList<T>& SinglyCircularLinkedList<T>::operator=(const SinglyCircularLinkedList& other) noexcept
+CircularSinglyLinkedList<T>& CircularSinglyLinkedList<T>::operator=(const CircularSinglyLinkedList& other) noexcept
 {
     if(this == &other)
     {
@@ -184,7 +184,7 @@ SinglyCircularLinkedList<T>& SinglyCircularLinkedList<T>::operator=(const Singly
 }
 //Move constructor
 template<typename T>
-SinglyCircularLinkedList<T>::SinglyCircularLinkedList(SinglyCircularLinkedList&& other) noexcept
+CircularSinglyLinkedList<T>::CircularSinglyLinkedList(CircularSinglyLinkedList&& other) noexcept
 :m_head(other.m_head),m_listLength(other.m_listLength)
 {
     other.m_head = nullptr;
@@ -192,7 +192,7 @@ SinglyCircularLinkedList<T>::SinglyCircularLinkedList(SinglyCircularLinkedList&&
 }
 //Move assignment operator
 template<typename T>
-SinglyCircularLinkedList<T>& SinglyCircularLinkedList<T>::operator=(SinglyCircularLinkedList&& other) noexcept
+CircularSinglyLinkedList<T>& CircularSinglyLinkedList<T>::operator=(CircularSinglyLinkedList&& other) noexcept
 {
     if(this == &other)
     {
@@ -216,7 +216,7 @@ SinglyCircularLinkedList<T>& SinglyCircularLinkedList<T>::operator=(SinglyCircul
 
 //Destructor
 template<typename T>
-SinglyCircularLinkedList<T>::~SinglyCircularLinkedList()
+CircularSinglyLinkedList<T>::~CircularSinglyLinkedList()
 {   
     Node<T> * current = m_head;
     if(!current)
@@ -237,7 +237,7 @@ SinglyCircularLinkedList<T>::~SinglyCircularLinkedList()
 
 
 template<typename T>
-bool SinglyCircularLinkedList<T>::operator==(const SinglyCircularLinkedList& other) noexcept
+bool CircularSinglyLinkedList<T>::operator==(const CircularSinglyLinkedList& other) noexcept
 {
     Node<T> * current = m_head;
     Node<T> * otherCurrent = other.m_head;
@@ -258,7 +258,7 @@ bool SinglyCircularLinkedList<T>::operator==(const SinglyCircularLinkedList& oth
 
 
 template<typename T>
-void SinglyCircularLinkedList<T>::add_to_end(T value)
+void CircularSinglyLinkedList<T>::add_to_end(T value)
 {
     if(m_head->next == m_head)
     {
@@ -281,7 +281,7 @@ void SinglyCircularLinkedList<T>::add_to_end(T value)
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::add_to_start(T value)
+void CircularSinglyLinkedList<T>::add_to_start(T value)
 {
     Node<T> * current = m_head;
     current = walk_list_to_end(current); //need to link last node to first, so walk to the end to grab a pointer to it
@@ -294,7 +294,7 @@ void SinglyCircularLinkedList<T>::add_to_start(T value)
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::insert(T value, size_t index)
+void CircularSinglyLinkedList<T>::insert(T value, size_t index)
 {
     if(index == 0)
     {
@@ -329,7 +329,7 @@ void SinglyCircularLinkedList<T>::insert(T value, size_t index)
 }//TODO
 
 template<typename T>
-void SinglyCircularLinkedList<T>::delete_end()
+void CircularSinglyLinkedList<T>::delete_end()
 {
     if(m_listLength == 1)
     {
@@ -358,7 +358,7 @@ void SinglyCircularLinkedList<T>::delete_end()
 }//TODO
 
 template<typename T>
-void SinglyCircularLinkedList<T>::delete_start()
+void CircularSinglyLinkedList<T>::delete_start()
 {
     if(m_listLength == 1)
     {
@@ -381,7 +381,7 @@ void SinglyCircularLinkedList<T>::delete_start()
 }//TODO
 
 template<typename T>
-void SinglyCircularLinkedList<T>::delete_at(size_t index)
+void CircularSinglyLinkedList<T>::delete_at(size_t index)
 {
     if(m_listLength == 1)
     {
@@ -425,7 +425,7 @@ void SinglyCircularLinkedList<T>::delete_at(size_t index)
 }//TODO
 
 template<typename T>
-void SinglyCircularLinkedList<T>::replace_value(size_t index,T value)
+void CircularSinglyLinkedList<T>::replace_value(size_t index,T value)
 {
     if(index<0 || index>=m_listLength)
     {
@@ -439,7 +439,7 @@ void SinglyCircularLinkedList<T>::replace_value(size_t index,T value)
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::swap_values(size_t index1, size_t index2)
+void CircularSinglyLinkedList<T>::swap_values(size_t index1, size_t index2)
 {
     if(index1<0 || index2<0 || index1>=m_listLength || index2>=m_listLength)
     {
@@ -468,7 +468,7 @@ void SinglyCircularLinkedList<T>::swap_values(size_t index1, size_t index2)
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::sort() requires std::is_arithmetic<T>::value
+void CircularSinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 {
     //Insertion sort
     size_t i = 2;
@@ -485,7 +485,7 @@ void SinglyCircularLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 }
 
 template<typename T>
-T SinglyCircularLinkedList<T>::access(size_t index) const
+T CircularSinglyLinkedList<T>::access(size_t index) const
 {
     Node<T> * current = m_head;
     size_t i = 0;
@@ -495,7 +495,7 @@ T SinglyCircularLinkedList<T>::access(size_t index) const
 }
 
 template<typename T>
-void SinglyCircularLinkedList<T>::print_values() const
+void CircularSinglyLinkedList<T>::print_values() const
 {
     for(size_t i = 0; i < length(); i++)
     {
@@ -504,13 +504,13 @@ void SinglyCircularLinkedList<T>::print_values() const
 }
 
 template<typename T>
-T SinglyCircularLinkedList<T>::first_value() const
+T CircularSinglyLinkedList<T>::first_value() const
 {
     return m_head->value;   
 }
 
 template<typename T>
-T SinglyCircularLinkedList<T>::last_value() const
+T CircularSinglyLinkedList<T>::last_value() const
 {
     Node<T> * current = m_head;
     current = walk_list_to_end(current);
@@ -518,12 +518,12 @@ T SinglyCircularLinkedList<T>::last_value() const
 }
 
 template<typename T>
-size_t SinglyCircularLinkedList<T>::length() const{
+size_t CircularSinglyLinkedList<T>::length() const{
     return m_listLength;
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& os, const SinglyCircularLinkedList<T>& other)
+std::ostream& operator<<(std::ostream& os, const CircularSinglyLinkedList<T>& other)
 {
     Node<T> * current = other.m_head;
     while(current->next != other.m_head)
