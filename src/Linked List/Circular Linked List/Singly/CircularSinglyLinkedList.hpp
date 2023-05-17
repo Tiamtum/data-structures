@@ -29,7 +29,7 @@ class CircularSinglyLinkedList
     void replace_value(size_t index,T value);
     void swap_values(size_t index1, size_t index2);
     void sort() requires std::is_arithmetic<T>::value;
-    T access(size_t index) const;
+    T access(int index) const;
     void print_values() const;
     T first_value() const;
     T last_value() const;
@@ -476,11 +476,21 @@ void CircularSinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 }
 
 template<typename T>
-T CircularSinglyLinkedList<T>::access(size_t index) const
+T CircularSinglyLinkedList<T>::access(int index) const
 {
     Node<T> * current = m_head;
     size_t i = 0;
-    index = index % m_listLength; //mod length to leverage the circular nature of the list 
+    auto adjustIndex = [](int ind, int len){
+        if(ind>=0)
+        {
+            return ind % len;
+        }
+        else
+        {
+            return ((ind % len)+len);
+        }
+    };
+    index = adjustIndex(index,m_listLength);
     current = walk_list_between_indices(current,i,index);
     return current->value;
 }
