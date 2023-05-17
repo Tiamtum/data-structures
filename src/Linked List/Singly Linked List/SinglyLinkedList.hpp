@@ -18,6 +18,8 @@ class SinglyLinkedList
     SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept;      //move assignment
     ~SinglyLinkedList();                                                //destructor
 
+    bool operator==(const SinglyLinkedList& other) noexcept;
+
     void add_to_end(T value);
     void add_to_start(T value);
     void insert(T value, size_t index);
@@ -237,6 +239,26 @@ SinglyLinkedList<T>::~SinglyLinkedList()
         }
         delete current;        
     }
+}
+
+template<typename T>
+bool SinglyLinkedList<T>::operator==(const SinglyLinkedList& other) noexcept
+{
+    Node<T> * current = m_head;
+    Node<T> * otherCurrent = other.m_head;
+    while(current->next)
+    {
+        if(current->value == otherCurrent->value)
+        {
+            current=current->next;
+            otherCurrent=otherCurrent->next;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 template <typename T>
