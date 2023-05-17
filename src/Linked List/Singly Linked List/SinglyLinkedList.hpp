@@ -184,7 +184,6 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
     else
     {
         std::cout<<"Error in operator=\n";
-        exit(EXIT_FAILURE);
     }
 }
 //Move constructor
@@ -322,8 +321,9 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
     }
     else
     {
-        std::cout<<"Out of bounds index for insert().\n";
-        exit(EXIT_FAILURE);
+        std::cout<<"Out of bounds index for insert().\n" 
+            <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+            <<"insert() was given index: index="<<index<<"\n";
     }
 }
 
@@ -332,9 +332,7 @@ void SinglyLinkedList<T>::delete_end()
 {
     if(m_listLength == 1)
     {
-        std::cout<<"Error: List consists of a single node.\n";
-        delete m_head;
-        exit(EXIT_FAILURE);
+        std::cout<<"delete_end() Error: List consists of a single node.\n";
     }
     else
     {
@@ -360,9 +358,7 @@ void SinglyLinkedList<T>::delete_start()
 {
     if(m_listLength == 1)
     {
-        std::cout<<"Error: List consists of a single node.\n";
-        delete m_head;
-        exit(EXIT_FAILURE);
+        std::cout<<"delete_start() Error: List consists of a single node.\n";
     }
     else
     {
@@ -378,9 +374,7 @@ void SinglyLinkedList<T>::delete_at(size_t index)
 {   
     if(m_listLength == 1)
     {
-        std::cout<<"Error: List consists of a single node.\n";
-        delete m_head;
-        exit(EXIT_FAILURE);
+        std::cout<<"delete_at() Error: List consists of a single node.\n";
     }
     else if(index == 0)
     {
@@ -410,8 +404,9 @@ void SinglyLinkedList<T>::delete_at(size_t index)
     }
     else
     {
-        std::cout<<"Out of bounds index for delete_at().\n";
-        exit(EXIT_FAILURE);        
+        std::cout<<"Out of bounds index for delete_at().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"delete_at() was given index: index="<<index<<"\n";      
     }
 }
 
@@ -420,13 +415,17 @@ void SinglyLinkedList<T>::replace_value(size_t index, T value)
 {
     if(index<0 || index>=m_listLength)
     {
-        std::cout<<"Out of bounds index for replace_value().\n";
-        exit(EXIT_FAILURE);
+        std::cout<<"Out of bounds index for replace_value().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"replace_value() was given index: index="<<index<<"\n";
     }
-    size_t i = 0 ;
-    Node<T> * current = m_head;
-    current = walk_list_between_indices(current,i,index);
-    current->value = value;
+    else
+    {
+        size_t i = 0 ;
+        Node<T> * current = m_head;
+        current = walk_list_between_indices(current,i,index);
+        current->value = value;
+    }
 }
 
 template<typename T>
@@ -437,26 +436,27 @@ void SinglyLinkedList<T>::swap_values(size_t index1, size_t index2)
         std::cout<<"Out of bounds index for swap_values().\n" 
                  <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
                  <<"swap_values() was given indices: index1="<<index1<<", index2="<<index2<<"\n";
-        exit(EXIT_FAILURE);
     }
-
-    if(index1>index2)
+    else
     {
-        std::swap(index1,index2); //why not just do this for the values?
+        if(index1>index2)
+        {
+            std::swap(index1,index2); //why not just do this for the values?
+        }
+
+        Node<T> * current = m_head;
+        size_t i = 0;
+
+        current = walk_list_between_indices(current,i,index1);
+
+        Node<T> * index1Node = current;
+        T value1 = current->value;
+
+        current = walk_list_between_indices(current,i,index2);
+
+        index1Node->value = current->value;
+        current->value = value1;
     }
-
-    Node<T> * current = m_head;
-    size_t i = 0;
-
-    current = walk_list_between_indices(current,i,index1);
-
-    Node<T> * index1Node = current;
-    T value1 = current->value;
-
-    current = walk_list_between_indices(current,i,index2);
-
-    index1Node->value = current->value;
-    current->value = value1;
 }
 
 template<typename T>
