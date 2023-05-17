@@ -121,66 +121,62 @@ CircularSinglyLinkedList<T>& CircularSinglyLinkedList<T>::operator=(const Circul
     {
         return *this;
     }
-
-    Node<T> * thisList = m_head;
-    Node<T> * otherList = other.m_head;
-
-    if(length() == other.length()) //lists are equal in length, no new allocations required just replace the values
-    {
-        while(thisList->next != m_head)
-        {
-            thisList->value = otherList->value;
-            thisList = thisList->next;
-            otherList = otherList->next;
-        }
-        thisList->value = otherList->value;
-        return *this;
-    }
-    else if(length() < other.length()) //list is smaller than what we want to assign, replace values and allocate nodes
-    {
-        while(thisList->next != m_head) //walk smaller list to it's end, replace values
-        {
-            thisList->value = otherList->value;
-            thisList = thisList->next;
-            otherList = otherList->next;
-        }
-        thisList->value = otherList->value;
-        otherList = otherList->next;
-
-        while(otherList->next != other.m_head) //walk larger list from where it left off, allocate new nodes and fill values from it
-        {
-            add_to_end(otherList->value);
-            otherList = otherList->next;
-        }
-        add_to_end(otherList->value);
-        return *this;
-    }
-    else if(length() > other.length()) //list is greater than what we want to assign, replace values and deallocate nodes
-    {
-        while(otherList->next != other.m_head) //walk the smaller list and replace larger list values with it's values
-        {
-            thisList->value = otherList->value;
-            otherList = otherList->next;
-            thisList = thisList->next;
-        }
-        thisList->value = otherList->value;
-        Node<T> * leftOverNode = thisList->next;
-        while(leftOverNode->next != m_head) //possible refactor with delete functions?
-        {
-            Node<T> * temp = leftOverNode;
-            leftOverNode = leftOverNode->next;
-            delete temp;
-        }
-        thisList->next = m_head;
-        delete leftOverNode;
-        return *this;
-    }
     else
     {
-        std::cout<<"Error in operator=\n";
-        return *this=nullptr; //not sure about this
-    }
+        Node<T> * thisList = m_head;
+        Node<T> * otherList = other.m_head;
 
+        if(length() == other.length()) //lists are equal in length, no new allocations required just replace the values
+        {
+            while(thisList->next != m_head)
+            {
+                thisList->value = otherList->value;
+                thisList = thisList->next;
+                otherList = otherList->next;
+            }
+            thisList->value = otherList->value;
+            return *this;
+        }
+        else if(length() < other.length()) //list is smaller than what we want to assign, replace values and allocate nodes
+        {
+            while(thisList->next != m_head) //walk smaller list to it's end, replace values
+            {
+                thisList->value = otherList->value;
+                thisList = thisList->next;
+                otherList = otherList->next;
+            }
+            thisList->value = otherList->value;
+            otherList = otherList->next;
+
+            while(otherList->next != other.m_head) //walk larger list from where it left off, allocate new nodes and fill values from it
+            {
+                add_to_end(otherList->value);
+                otherList = otherList->next;
+            }
+            add_to_end(otherList->value);
+            return *this;
+        }
+        else //(length() > other.length()) //list is greater than what we want to assign, replace values and deallocate nodes
+        {
+            while(otherList->next != other.m_head) //walk the smaller list and replace larger list values with it's values
+            {
+                thisList->value = otherList->value;
+                otherList = otherList->next;
+                thisList = thisList->next;
+            }
+            thisList->value = otherList->value;
+            Node<T> * leftOverNode = thisList->next;
+            while(leftOverNode->next != m_head) //possible refactor with delete functions?
+            {
+                Node<T> * temp = leftOverNode;
+                leftOverNode = leftOverNode->next;
+                delete temp;
+            }
+            thisList->next = m_head;
+            delete leftOverNode;
+            return *this;
+        }
+    }
 }
 //Move constructor
 template<typename T>
