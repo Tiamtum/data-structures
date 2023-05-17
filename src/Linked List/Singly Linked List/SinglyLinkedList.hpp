@@ -505,7 +505,7 @@ template<typename T>
 T SinglyLinkedList<T>::last_value() const
 {
     Node<T> * current = m_head;
-    current = walk_list_to_end();
+    current = walk_list_to_end(current);
     return current->value;
 }
 
