@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -I -Wall -Wextra -pedantic-errors
 OBJFILES = SinglyLinkedListTests.o
-TARGET = tests 
+TARGET = structureTests
 
 $(TARGET): $(OBJFILES) 
 	$(CC) $(CFLAGS) $(OBJFILES) -o $(TARGET)
