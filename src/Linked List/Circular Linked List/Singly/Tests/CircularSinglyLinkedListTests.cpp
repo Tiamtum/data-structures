@@ -255,9 +255,13 @@ TEST_CASE("Accessing")
     {
         CHECK(list.access(2)==3);
     }
-    SUBCASE("Access circularly")
+    SUBCASE("Access circularly positive")
     {
-        CHECK(list.access(936)==2);
+        CHECK(list.access(998)==3);
+    }
+    SUBCASE("Accessing circularly negative")
+    {
+        CHECK(list.access(-998)==3);
     }
 }
 
