@@ -184,6 +184,7 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
     else
     {
         std::cout<<"Error in operator=\n";
+        return *this=nullptr; //not sure about this
     }
 }
 //Move constructor
