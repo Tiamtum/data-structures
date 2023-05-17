@@ -16,7 +16,10 @@ class DoublyLinkedList
     DoublyLinkedList& operator=(const DoublyLinkedList& list) noexcept; //TODO 
     DoublyLinkedList(DoublyLinkedList&& list) noexcept; //TODO                 
     DoublyLinkedList& operator=(DoublyLinkedList&& list) noexcept;  //TODO      
-    ~DoublyLinkedList();                                                
+    ~DoublyLinkedList();      
+
+    bool operator==(const DoublyLinkedList& other) noexcept; //TODO
+                                          
 
     void add_to_end(T value);   //TODO
     void add_to_start(T value); //TODO
