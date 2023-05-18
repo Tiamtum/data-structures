@@ -90,11 +90,6 @@ namespace SinglyLinkedListTests
         SinglyLinkedList<int> expected({0,1,2,3,4,5,6,7,8,9,10});
         return list1==expected;
     }
-    bool access()
-    {
-        SinglyLinkedList<int> list1({1,2,3,4,5});
-        return list1.access(2) == 3;
-    }
     bool first_value()
     {
         SinglyLinkedList<int> list1({1,2,3,4,5});
@@ -245,11 +240,29 @@ TEST_CASE("Swap Values")
 
 }
 
+TEST_CASE("Accessing")
+{
+    SinglyLinkedList<int> list({1,2,3,4,5});
+    REQUIRE(list.length()==5);  
+    SUBCASE("Access Start")
+    {
+        CHECK(list.access(0)==1);
+    }
+    SUBCASE("Access End")
+    {
+        CHECK(list.access(list.length()-1)==5);
+    }
+    SUBCASE("Access Middle")
+    {
+        CHECK(list.access(2)==3);
+    }
+}
+
+
 TEST_CASE("Other Member Functions")
 {
     CHECK(SinglyLinkedListTests::replace_value() == true);
     CHECK(SinglyLinkedListTests::sort() == true);
-    CHECK(SinglyLinkedListTests::access() == true);
     CHECK(SinglyLinkedListTests::first_value() == true);
     CHECK(SinglyLinkedListTests::last_value() == true);    
 }
