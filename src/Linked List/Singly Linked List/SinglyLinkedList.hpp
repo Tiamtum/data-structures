@@ -34,6 +34,8 @@ class SinglyLinkedList
     void print_values() const;
     T first_value() const;
     T last_value() const;
+    Node<T> * get_address(size_t index) const;
+    Node<T> * get_next_address(size_t index) const;
     size_t length() const;
 
     template<typename U>
@@ -505,6 +507,23 @@ T SinglyLinkedList<T>::last_value() const
     Node<T> * current = m_head;
     current = walk_list_to_end(current);
     return current->value;
+}
+
+template<typename T>
+Node<T> * SinglyLinkedList<T>::get_address(size_t index) const
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+    current = walk_list_between_indices(current,i,index);
+    return current;
+}
+template<typename T>
+Node<T> * SinglyLinkedList<T>::get_next_address(size_t index) const
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+    current = walk_list_between_indices(current,i,index);
+    return current->next;
 }
 
 template<typename T>
