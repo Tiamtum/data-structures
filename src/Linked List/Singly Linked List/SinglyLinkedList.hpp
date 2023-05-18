@@ -117,18 +117,18 @@ SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& other) noexcept
 }
 //Copy assignment operator
 template <typename T>
-SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& list) noexcept
+SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& other) noexcept
 {
-    if(this == &list) //assigning to itself 
+    if(this == &other) //assigning to itself 
     {
         return *this;
     }
     else
     {
         Node<T> * thisList = this->m_head;
-        const Node<T> * otherList = list.m_head;
+        const Node<T> * otherList = other.m_head;
 
-        if(this->length() == list.length()) //lists are equal in length, no new allocations required just replace the values
+        if(this->length() == other.length()) //lists are equal in length, no new allocations required just replace the values
         {
             while(thisList->next)
             {
@@ -140,7 +140,7 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
             thisList->value = otherList->value;
             return *this;
         }
-        else if(this->length() < list.length()) //list is smaller than what we want to assign, replace values and allocate nodes
+        else if(this->length() < other.length()) //list is smaller than what we want to assign, replace values and allocate nodes
         {
             while(thisList->next) //walk smaller list to it's end, replace values
             {
@@ -159,7 +159,7 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
             add_to_end(otherList->value);
             return *this;
         }
-        else //(this->length() > list.length()) //list is greater than what we want to assign, replace values and deallocate nodes
+        else //(this->length() > other.length()) //list is greater than what we want to assign, replace values and deallocate nodes
         {
             while(otherList->next)                  //walk the smaller list and replace larger list values with its values
             {
@@ -186,17 +186,17 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& l
 }
 //Move constructor
 template<typename T>
-SinglyLinkedList<T>::SinglyLinkedList(SinglyLinkedList&& list) noexcept
- :m_head(list.m_head),m_listLength(list.m_listLength)   //'rewire' m_head to point to list.m_head location
+SinglyLinkedList<T>::SinglyLinkedList(SinglyLinkedList&& other) noexcept
+ :m_head(other.m_head),m_listLength(other.m_listLength)   //'rewire' m_head to point to list.m_head location
 {
-    list.m_head= nullptr;
-    list.m_listLength = 0;   
+    other.m_head= nullptr;
+    other.m_listLength = 0;   
 } 
 //Move assignment operator               
 template<typename T>
-SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noexcept
+SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& other) noexcept
 {
-    if(this == &list) //moving in to itself 
+    if(this == &other) //moving in to itself 
     {
         return *this;
     }
@@ -211,10 +211,10 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& list) noe
     } 
     delete current;
     
-    m_head = list.m_head;
-    m_listLength = list.m_listLength;
-    list.m_head= nullptr;
-    list.m_listLength = 0;  
+    m_head = other.m_head;
+    m_listLength = other.m_listLength;
+    other.m_head= nullptr;
+    other.m_listLength = 0;  
     return *this;
 }
 //Destructor
