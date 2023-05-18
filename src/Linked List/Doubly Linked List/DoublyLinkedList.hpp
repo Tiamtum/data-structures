@@ -5,7 +5,6 @@
 #include <iomanip>
 #include "Node.hpp"
 
-
 template<typename T>
 class DoublyLinkedList
 {
@@ -31,7 +30,11 @@ class DoublyLinkedList
     void replace_value(size_t index,T value); 
     void swap_values(size_t index1, size_t index2); 
     void sort() requires std::is_arithmetic<T>::value;  
-    T access(size_t index) const;   
+    T access_from_start(size_t index) const;
+    T access_from_end(size_t index) const;  
+    Node<T> * get_address(size_t index) const;
+    Node<T> * get_next_address(size_t index) const;
+    Node<T> * get_previous_address(size_t index) const;
     void print_values() const;  
     T first_value() const;  
     T last_value() const;   
@@ -42,9 +45,13 @@ class DoublyLinkedList
 
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;    
-    Node<T> * walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const;   
+    Node<T> * walk_list_fowards_between_indices(Node<T> * current, size_t& start, size_t end) const;  
+    Node<T> * walk_list_to_start(Node<T> * current) const;    
+    Node<T> * walk_list_backwards_between_indices(Node<T> * current, size_t& start, size_t end) const;  
+
     size_t m_listLength = 0;
     Node<T> * m_head;
+    Node<T> * m_tail;
 };
 
 template<typename T>
@@ -57,7 +64,7 @@ Node<T> * DoublyLinkedList<T>::walk_list_to_end(Node<T> * current) const
     return current;
 }
 template<typename T>
-Node<T> * DoublyLinkedList<T>::walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const
+Node<T> * DoublyLinkedList<T>::walk_list_fowards_between_indices(Node<T> * current, size_t& start, size_t end) const
 {
     while(start<end)
     {
@@ -66,11 +73,31 @@ Node<T> * DoublyLinkedList<T>::walk_list_between_indices(Node<T> * current, size
     }
     return current;
 }
+template<typename T>
+Node<T> * DoublyLinkedList<T>::walk_list_to_start(Node<T> * current) const
+{
+    while(current->previous)
+    {
+        current = current->previous;
+    }
+    return current;
+}
+template<typename T>
+Node<T> * DoublyLinkedList<T>::walk_list_backwards_between_indices(Node<T> * current, size_t& start, size_t end) const
+{
+    while(start>end)
+    {
+        current=current->previous;
+        start--;
+    }
+    return current;
+}
 //Constructor - Single value
 template <typename T>
 DoublyLinkedList<T>::DoublyLinkedList(T value) noexcept
 {
     m_head = new Node<T>;
+    m_tail = nullptr;
     m_head->value = value;
     m_head->next = nullptr;
     m_head->previous = nullptr;
@@ -188,9 +215,10 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList& othe
 //Move Constructor
 template<typename T>
 DoublyLinkedList<T>::DoublyLinkedList(DoublyLinkedList&& other) noexcept
-:m_head(other.m_head),m_listLength(other.m_listLength)
+:m_head(other.m_head),m_head(other.m_tail),m_listLength(other.m_listLength)
 {
     other.m_head= nullptr;
+    other.m_tail= nullptr;
     other.m_listLength = 0;   
 }
 //Move Assignment Operator
@@ -213,8 +241,10 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(DoublyLinkedList&& other) no
     delete current;
     
     m_head = other.m_head;
+    m_tail = other.m_tail;
     m_listLength = other.m_listLength;
-    other.m_head= nullptr;
+    other.m_head = nullptr;
+    other.m_tail = nullptr;
     other.m_listLength = 0;  
     return *this;
 }
@@ -264,22 +294,22 @@ void DoublyLinkedList<T>::add_to_end(T value)
 {
     if(!(m_head->next))
     {
-        Node<T> * tail = new Node<T>;
-        m_head->next = tail;
-        tail->value = value;
-        tail->next = nullptr;
-        tail->previous = m_head;
+        m_tail = new Node<T>;
+        m_head->next = m_tail;
+        m_tail->value = value;
+        m_tail->next = nullptr;
+        m_tail->previous = m_head;
         m_listLength++;
     }
     else
     {
         Node<T> * current = m_head;
         current = walk_list_to_end(current);
-        Node<T> * newTail = new Node<T>;
-        current->next = newTail;
-        newTail->value = value;
-        newTail->next = nullptr;
-        newTail->previous = current;
+        m_tail = new Node<T>;
+        current->next = m_tail;
+        m_tail->value = value;
+        m_tail->next = nullptr;
+        m_tail->previous = current;
         m_listLength++;
     }    
 }
@@ -291,6 +321,7 @@ void DoublyLinkedList<T>::add_to_start(T value)
     newHead->value = value;
     newHead->next = m_head;
     newHead->previous = nullptr;
+    m_tail = m_head;
     m_head = newHead;
     m_listLength++;    
 }
@@ -348,6 +379,7 @@ void DoublyLinkedList<T>::delete_end()
             {
                 delete(current->next);
                 m_listLength--;
+                m_tail = current;
                 current->next = nullptr;
                 break;
             }
@@ -449,7 +481,7 @@ void DoublyLinkedList<T>::replace_value(size_t index,T value)
     {
         size_t i = 0 ;
         Node<T> * current = m_head;
-        current = walk_list_between_indices(current,i,index);
+        current = walk_list_fowards_between_indices(current,i,index);
         current->value = value;
     }
 }
@@ -473,12 +505,12 @@ void DoublyLinkedList<T>::swap_values(size_t index1, size_t index2)
         Node<T> * current = m_head;
         size_t i = 0;
 
-        current = walk_list_between_indices(current,i,index1);
+        current = walk_list_fowards_between_indices(current,i,index1);
 
         Node<T> * index1Node = current;
         T value1 = current->value;
 
-        current = walk_list_between_indices(current,i,index2);
+        current = walk_list_fowards_between_indices(current,i,index2);
 
         index1Node->value = current->value;
         current->value = value1;
@@ -493,7 +525,7 @@ void DoublyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
     while(i < m_listLength+1)
     {
         size_t j = i-1;
-        while(j>0 && access(j-1)>access(j))
+        while(j>0 && access_from_start(j-1)>access_from_start(j))
         {
             swap_values(j-1,j);
             j--;
@@ -503,12 +535,45 @@ void DoublyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 } 
 
 template<typename T>
-T DoublyLinkedList<T>::access(size_t index) const
+T DoublyLinkedList<T>::access_from_start(size_t index) const
 {
     Node<T> * current = m_head;
     size_t i = 0;
-    current = walk_list_between_indices(current,i,index);
+    current = walk_list_fowards_between_indices(current,i,index);
     return current->value;
+}
+template<typename T>
+T DoublyLinkedList<T>::access_from_end(size_t index) const
+{
+    Node<T> * current = m_tail;
+    size_t i = m_listLength-1;
+    current = walk_list_backwards_between_indices(current,i,index);
+    return current->value;
+}
+
+template<typename T>
+Node<T> * DoublyLinkedList<T>::get_address(size_t index) const
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+    current = walk_list_fowards_between_indices(current,i,index);
+    return current;
+}
+template<typename T>
+Node<T> * DoublyLinkedList<T>::get_next_address(size_t index) const
+{
+    Node<T> * current = m_head;
+    size_t i = 0;
+    current = walk_list_fowards_between_indices(current,i,index);
+    return current->next;
+}
+template<typename T>
+Node<T> * DoublyLinkedList<T>::get_previous_address(size_t index) const
+{
+    Node<T> * current = m_tail;
+    size_t i = m_listLength-1;
+    current = walk_list_backwards_between_indices(current,i,index);
+    return current->previous;
 }
 
 template<typename T>
@@ -516,7 +581,7 @@ void DoublyLinkedList<T>::print_values() const
 {
     for(size_t i = 0; i < length(); i++)
     {
-        std::cout<<"["<<i<<"] = " << access(i) << "\n";
+        std::cout<<"["<<i<<"] = " << access_from_start(i) << "\n";
     }
 }  
 
@@ -529,9 +594,7 @@ T DoublyLinkedList<T>::first_value() const
 template<typename T>
 T DoublyLinkedList<T>::last_value() const
 {
-    Node<T> * current = m_head;
-    current = walk_list_to_end(current);
-    return current->value;
+    return m_tail->value;
 }
 
 template<typename T>
@@ -539,8 +602,6 @@ size_t DoublyLinkedList<T>::length() const
 {
     return m_listLength;
 }  
-
-
 
 #endif
 
