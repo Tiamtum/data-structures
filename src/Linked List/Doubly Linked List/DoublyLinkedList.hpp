@@ -215,7 +215,7 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList& othe
 //Move Constructor
 template<typename T>
 DoublyLinkedList<T>::DoublyLinkedList(DoublyLinkedList&& other) noexcept
-:m_head(other.m_head),m_head(other.m_tail),m_listLength(other.m_listLength)
+:m_head(other.m_head),m_tail(other.m_tail),m_listLength(other.m_listLength)
 {
     other.m_head= nullptr;
     other.m_tail= nullptr;
