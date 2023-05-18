@@ -9,7 +9,7 @@ template <typename T>
 class SinglyLinkedList
 {
     public:
-    SinglyLinkedList() = delete; //handle empty case at some point
+    SinglyLinkedList() noexcept;
     explicit SinglyLinkedList(T value) noexcept;
     explicit SinglyLinkedList(std::initializer_list<T> values) noexcept;      
     SinglyLinkedList(const SinglyLinkedList& other) noexcept;            //copy constructor (initialize a previously uninitialized list from some other list's data. )
@@ -68,7 +68,13 @@ Node<T> * SinglyLinkedList<T>::walk_list_between_indices(Node<T> * current, size
     return current;
 }
 
-
+template<typename T>
+SinglyLinkedList<T>::SinglyLinkedList() noexcept
+{
+    std::cout<<"default constructor called\n";
+    m_head = new Node<T>;
+    m_listLength=0;
+}
 //Constructor - Single value
 template <typename T>
 SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
@@ -262,8 +268,13 @@ bool SinglyLinkedList<T>::operator==(const SinglyLinkedList& other) noexcept
 
 template <typename T>
 void SinglyLinkedList<T>::add_to_end(T value)
-{
-    if(!(m_head->next))
+{   
+    if(m_listLength == 0)   //empty list
+    {
+        m_head->value = value;
+        m_listLength++;
+    }
+    else if(!(m_head->next))
     {
         Node<T> * tail = new Node<T>;
         m_head->next = tail;
@@ -286,17 +297,30 @@ void SinglyLinkedList<T>::add_to_end(T value)
 template <typename T>
 void SinglyLinkedList<T>::add_to_start(T value)
 {
-    Node<T> * newHead = new Node<T>;
-    newHead->value = value;
-    newHead->next = m_head;
-    m_head = newHead;
-    m_listLength++;
+    if(m_listLength != 0)
+    {
+        Node<T> * newHead = new Node<T>;
+        newHead->value = value;
+        newHead->next = m_head;
+        m_head = newHead;
+        m_listLength++;  
+    }
+    else //empty list
+    {
+        m_head->value = value;
+        m_listLength++;     
+    }
 }
 
 template <typename T>
 void SinglyLinkedList<T>::insert(T value, size_t index)
 {
-    if(index == 0)
+    if(m_listLength == 0)
+    {
+        m_head->value = value;
+        m_listLength++;
+    }
+    else if(index == 0)
     {
         add_to_start(value);
     }
@@ -332,7 +356,8 @@ void SinglyLinkedList<T>::delete_end()
 {
     if(m_listLength == 1)
     {
-        std::cout<<"delete_end() Error: List consists of a single node.\n";
+        // std::cout<<"delete_end() Error: List consists of a single node.\n";
+        m_listLength = 0 ;
     }
     else
     {
@@ -358,7 +383,8 @@ void SinglyLinkedList<T>::delete_start()
 {
     if(m_listLength == 1)
     {
-        std::cout<<"delete_start() Error: List consists of a single node.\n";
+        // std::cout<<"delete_start() Error: List consists of a single node.\n";
+        m_listLength = 0;
     }
     else
     {
@@ -374,7 +400,8 @@ void SinglyLinkedList<T>::delete_at(size_t index)
 {   
     if(m_listLength == 1)
     {
-        std::cout<<"delete_at() Error: List consists of a single node.\n";
+        // std::cout<<"delete_at() Error: List consists of a single node.\n";
+        m_listLength = 0;
     }
     else if(index == 0)
     {
