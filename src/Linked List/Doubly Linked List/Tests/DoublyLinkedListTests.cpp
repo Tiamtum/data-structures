@@ -242,15 +242,15 @@ TEST_CASE("Accessing")
     REQUIRE(list.length()==5);  
     SUBCASE("Access Start")
     {
-        CHECK(list.access(0)==1);
+        CHECK(list.access_from_start(0)==1);
     }
     SUBCASE("Access End")
     {
-        CHECK(list.access(list.length()-1)==5);
+        CHECK(list.access_from_end(list.length()-1)==5);
     }
     SUBCASE("Access Middle")
     {
-        CHECK(list.access(2)==3);
+        CHECK(list.access_from_start(2)==3);
     }
 }
 
