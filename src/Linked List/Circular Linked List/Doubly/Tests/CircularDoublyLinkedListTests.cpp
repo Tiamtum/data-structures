@@ -99,11 +99,92 @@ namespace CircularDoublyLinkedListTests{
     }
 }
 
+TEST_CASE("Default Constructor")
+{
+    CircularDoublyLinkedList<int> list;
+    REQUIRE(list.length()==0);
+    SUBCASE("Adding nodes")
+    {
+        SUBCASE("To End")
+        {
+            list.add_to_end(0);
+            list.add_to_end(1);
+            list.add_to_end(2);
+            list.add_to_end(3);
+            list.add_to_end(4);        
+            CircularDoublyLinkedList<int> expected({0,1,2,3,4});
+            REQUIRE(expected.length() == list.length());
+            CHECK(list==expected);
+        }
+        SUBCASE("To Start")
+        {
+            list.add_to_start(0);
+            list.add_to_start(-1);
+            list.add_to_start(-2);
+            list.add_to_start(-3);
+            list.add_to_start(-4);        
+            CircularDoublyLinkedList<int> expected({-4,-3,-2,-1,0});
+            REQUIRE(expected.length() == list.length());
+            CHECK(list==expected);            
+        }
+    }
+    SUBCASE("Deleting nodes")
+    {
+        list.add_to_end(0);
+        list.add_to_end(1);
+        list.add_to_end(2);
+        list.add_to_end(3);
+        list.add_to_end(4);   
+        list.delete_end();  
+        list.delete_end();             
+        list.delete_end();             
+        list.delete_end();             
+        list.delete_end();             
+        CHECK(list.length() == 0);
+    }
+    SUBCASE("Assigning")
+    {
+        SUBCASE("Copy")
+        {
+            SUBCASE("Empty into empty")
+            {
+                CircularDoublyLinkedList<int> empty;
+                empty=list;
+                CHECK(empty.length()==list.length());
+            }
+            SUBCASE("Empty into non-empty")
+            {
+                CircularDoublyLinkedList<int> nonEmpty({1,2,3,4,5});
+                nonEmpty = list;
+                CHECK(nonEmpty.length()==0);
+            }
+            SUBCASE("Non-empty into empty ")
+            {
+                CircularDoublyLinkedList<int> nonEmpty({1,2,3,4,5});
+                list = nonEmpty;
+                CHECK(list.length() == nonEmpty.length());
+            }
+        }
+        SUBCASE("Move")
+        {
+            CircularDoublyLinkedList<int> list2({0,0,0,0,0});
+            list2 = std::move(list);
+            CHECK(list2.length()==0);            
+        }
+    }
+}
+
 TEST_CASE("Constructors")
 {
     CHECK(CircularDoublyLinkedListTests::constructor_single_parameter() == true);
     CHECK(CircularDoublyLinkedListTests::constructor_initializer_list_parameter() == true);
     CHECK(CircularDoublyLinkedListTests::constructor_copy() == true);
+    SUBCASE("Empty Copy Construction")
+    {
+        CircularDoublyLinkedList<int> list;
+        CircularDoublyLinkedList<int> copiedFrom(list);
+        CHECK(copiedFrom.length() == list.length());
+    }    
     CHECK(CircularDoublyLinkedListTests::constructor_move() == true);
     CHECK(CircularDoublyLinkedListTests::move_assignment() == true);
 }
