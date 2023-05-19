@@ -606,6 +606,7 @@ Node<T> * SinglyLinkedList<T>::get_address(size_t index) const
     current = walk_list_between_indices(current,i,index);
     return current;
 }
+
 template<typename T>
 Node<T> * SinglyLinkedList<T>::get_next_address(size_t index) const
 {
@@ -626,12 +627,12 @@ size_t SinglyLinkedList<T>::length() const
 {
     return m_listLength;
 }
+
 template<typename T>
 bool SinglyLinkedList<T>::isEmpty() const
 {
     return m_listLength==0;
 }
-
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const SinglyLinkedList<T>& other)
