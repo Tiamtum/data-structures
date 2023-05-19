@@ -89,7 +89,7 @@ CircularSinglyLinkedList<T>::CircularSinglyLinkedList(T value) noexcept
 template<typename T>
 CircularSinglyLinkedList<T>::CircularSinglyLinkedList(std::initializer_list<T> values) noexcept
 {
-    for(auto& value: values)
+    for(const auto& value: values)
     {
         if(m_listLength == 0)
         {
