@@ -20,24 +20,5 @@ float randFloat(int from, int to)
 
 int main() 
 {
-    SinglyLinkedList<std::string> list;
-    std::cout<<list.length()<<"\n";
-    list.insert("a",2345345);
-    list.insert("b",0);
-    list.insert("c",1);
-    list.delete_end();
-    list.delete_end();
-    list.delete_end();
-    list.add_to_end("hello");
-
-    // list.add_to_start("b");
-    // list.add_to_start("c");
-    // list.add_to_start("d");
-    // list.add_to_start("e");
-    std::cout<<list;
-    std::cout<<list.length()<<"\n";
-
-
-
 
 }
