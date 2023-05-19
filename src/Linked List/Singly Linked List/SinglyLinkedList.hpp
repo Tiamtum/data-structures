@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "Node.hpp"
-//REFACTOR: See what you did in SinglyCicularLinkedList.hpp
 
 template <typename T>
 class SinglyLinkedList
@@ -37,6 +36,7 @@ class SinglyLinkedList
     Node<T> * get_address(size_t index) const;
     Node<T> * get_next_address(size_t index) const;
     size_t length() const;
+    bool isEmpty() const;
 
     template<typename U>
     friend std::ostream& operator<<(std::ostream& os, const SinglyLinkedList<U>& other);
@@ -71,7 +71,6 @@ Node<T> * SinglyLinkedList<T>::walk_list_between_indices(Node<T> * current, size
 template<typename T>
 SinglyLinkedList<T>::SinglyLinkedList() noexcept
 {
-    std::cout<<"default constructor called\n";
     m_head = new Node<T>;
     m_listLength=0;
 }
@@ -88,7 +87,7 @@ SinglyLinkedList<T>::SinglyLinkedList(T value) noexcept
 template<typename T>
 SinglyLinkedList<T>::SinglyLinkedList(std::initializer_list<T> values) noexcept
 {
-    for(auto& value: values)
+    for(const auto& value: values)
     {
         if(m_listLength==0)
         {
@@ -108,89 +107,115 @@ template <typename T>
 SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& other) noexcept 
 :m_listLength(other.m_listLength)
 {
-    Node<T> * originalCurrent = other.m_head;
-    
-    m_head = new Node<T>;
-    m_head->value = originalCurrent->value;
-    m_head->next = nullptr;
-
-    originalCurrent = originalCurrent->next;
-    
-    while(originalCurrent->next)
+    if(other.isEmpty())
     {
-        add_to_end(originalCurrent->value);
-        originalCurrent=originalCurrent->next;
+        m_head = new Node<T>;
     }
-    add_to_end(originalCurrent->value);
+    else
+    {
+        Node<T> * originalCurrent = other.m_head;
+        
+        m_head = new Node<T>;
+        m_head->value = originalCurrent->value;
+        m_head->next = nullptr;
+
+        originalCurrent = originalCurrent->next;
+        
+        while(originalCurrent->next)
+        {
+            add_to_end(originalCurrent->value);
+            originalCurrent=originalCurrent->next;
+        }
+        add_to_end(originalCurrent->value);
+    }
 }
 //Copy assignment operator
 template <typename T>
 SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& other) noexcept
 {
-    if(this == &other) //assigning to itself 
+    if(this == &other || this->isEmpty() && other.isEmpty()) //assigning to itself or assigning empty to empty
     {
         return *this;
     }
-    else
-    {
-        Node<T> * thisList = this->m_head;
-        const Node<T> * otherList = other.m_head;
 
-        if(this->length() == other.length()) //lists are equal in length, no new allocations required just replace the values
+    Node<T> * thisList = this->m_head;
+    const Node<T> * otherList = other.m_head;
+
+    if(this->length() == other.length()) //lists are equal in length, no new allocations required just replace the values
+    {            
+        while(thisList->next)
         {
-            while(thisList->next)
-            {
-                thisList->value = otherList->value;
-                thisList = thisList->next;
-                otherList = otherList->next;
-            }
-
             thisList->value = otherList->value;
-            return *this;
-        }
-        else if(this->length() < other.length()) //list is smaller than what we want to assign, replace values and allocate nodes
-        {
-            while(thisList->next) //walk smaller list to it's end, replace values
-            {
-                thisList->value = otherList->value;
-                otherList = otherList->next;
-                thisList = thisList->next;
-            }
-
-            thisList->value = otherList->value;
+            thisList = thisList->next;
             otherList = otherList->next;
+        }
+
+        thisList->value = otherList->value;
+        return *this;
+    }
+    else if(this->length() < other.length()) //list is smaller than what we want to assign, replace values and allocate nodes
+    {
+        if(this->isEmpty())
+        {
             while(otherList->next)
             {
-                add_to_end(otherList->value);
+                this->add_to_end(otherList->value);
                 otherList = otherList->next;
             }
-            add_to_end(otherList->value);
+            this->add_to_end(otherList->value);
             return *this;
-        }
-        else //(this->length() > other.length()) //list is greater than what we want to assign, replace values and deallocate nodes
+        }            
+        
+        while(thisList->next) //walk smaller list to it's end, replace values
         {
-            while(otherList->next)                  //walk the smaller list and replace larger list values with its values
-            {
-                thisList->value = otherList->value;
-                otherList = otherList->next;
-                thisList = thisList->next;
-            }
-
             thisList->value = otherList->value;
-            Node<T> * leftOverNode = thisList->next;
-            thisList->next = nullptr;
-            
-            while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
-            {
-                Node<T> * temp = leftOverNode;
-                leftOverNode = leftOverNode->next;
-                delete temp;
-            }
+            otherList = otherList->next;
+            thisList = thisList->next;
+        }
 
-            delete leftOverNode;
+        thisList->value = otherList->value;
+        otherList = otherList->next;
+        while(otherList->next)
+        {
+            add_to_end(otherList->value);
+            otherList = otherList->next;
+        }
+        add_to_end(otherList->value);
+        return *this;
+    }
+    else //(this->length() > other.length()) list is greater than what we want to assign, replace values and deallocate nodes
+    {
+        if(other.isEmpty())
+        {
+            for(size_t i = 0 ; i < m_listLength; i++)
+            {
+                this->delete_end();
+            }
+            m_listLength = 0;
             return *this;
         }
+        while(otherList->next)                  //walk the smaller list and replace larger list values with its values
+        {
+            thisList->value = otherList->value;
+            otherList = otherList->next;
+            thisList = thisList->next;
+        }
+
+        thisList->value = otherList->value;
+        Node<T> * leftOverNode = thisList->next;
+        thisList->next = nullptr;
+        
+        while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
+        {
+            Node<T> * temp = leftOverNode;
+            leftOverNode = leftOverNode->next;
+            delete temp;
+        }
+
+        delete leftOverNode;
+        return *this;
     }
+
 }
 //Move constructor
 template<typename T>
@@ -229,26 +254,37 @@ SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(SinglyLinkedList&& other) no
 template <typename T>
 SinglyLinkedList<T>::~SinglyLinkedList()
 {   
-    Node<T> * current = m_head;
-    if(!current)    //if list is initialized by move constructor, the moved-from list's m_head points to nullptr and has to be dealt with on its own
+    if(isEmpty())
     {
-        delete current;
+        delete m_head;
     }
     else
     {
-        while(current->next)
+        Node<T> * current = m_head;
+        if(!current)    //if list is initialized by move constructor, the moved-from list's m_head points to nullptr and has to be dealt with on its own
         {
-            Node<T> * temp = current;
-            current = current->next;
-            delete temp;
+            delete current;
         }
-        delete current;        
+        else
+        {
+            while(current->next)
+            {
+                Node<T> * temp = current;
+                current = current->next;
+                delete temp;
+            }
+            delete current;        
+        }
     }
 }
 
 template<typename T>
 bool SinglyLinkedList<T>::operator==(const SinglyLinkedList& other) noexcept
 {
+    if(isEmpty() && other.isEmpty())
+    {
+        return true;
+    }
     Node<T> * current = m_head;
     Node<T> * otherCurrent = other.m_head;
     while(current->next)
@@ -272,6 +308,7 @@ void SinglyLinkedList<T>::add_to_end(T value)
     if(m_listLength == 0)   //empty list
     {
         m_head->value = value;
+        m_head->next = nullptr;
         m_listLength++;
     }
     else if(!(m_head->next))
@@ -308,6 +345,7 @@ void SinglyLinkedList<T>::add_to_start(T value)
     else //empty list
     {
         m_head->value = value;
+        m_head->next = nullptr;
         m_listLength++;     
     }
 }
@@ -318,6 +356,7 @@ void SinglyLinkedList<T>::insert(T value, size_t index)
     if(m_listLength == 0)
     {
         m_head->value = value;
+        m_head->next = nullptr;
         m_listLength++;
     }
     else if(index == 0)
@@ -507,10 +546,18 @@ void SinglyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 template<typename T>
 T SinglyLinkedList<T>::access(size_t index) const
 {
+    if(index<0 || index>=m_listLength)
+    {
+        std::cout<<"Out of bounds index for access().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"access() was given indices: index="<<index<<"\n";
+    }
+
     Node<T> * current = m_head;
     size_t i = 0;
     current = walk_list_between_indices(current,i,index);
     return current->value;
+    
 }
 
 template<typename T>
@@ -525,12 +572,20 @@ void SinglyLinkedList<T>::print_values() const
 template<typename T>
 T SinglyLinkedList<T>::first_value() const
 {
+    if(isEmpty())
+    {
+        std::cout<<"first_value() Error - Trying to return value from empty list.\n";
+    }
     return m_head->value;
 }
 
 template<typename T>
 T SinglyLinkedList<T>::last_value() const
 {
+    if(isEmpty())
+    {
+        std::cout<<"last_value() Error - Trying to return value from empty list.\n";
+    }
     Node<T> * current = m_head;
     current = walk_list_to_end(current);
     return current->value;
@@ -539,6 +594,13 @@ T SinglyLinkedList<T>::last_value() const
 template<typename T>
 Node<T> * SinglyLinkedList<T>::get_address(size_t index) const
 {
+    if(index<0 || index>=m_listLength)
+    {
+        std::cout<<"Out of bounds index for get_address().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"get_address() was given indices: index="<<index<<"\n";
+    }
+
     Node<T> * current = m_head;
     size_t i = 0;
     current = walk_list_between_indices(current,i,index);
@@ -547,6 +609,12 @@ Node<T> * SinglyLinkedList<T>::get_address(size_t index) const
 template<typename T>
 Node<T> * SinglyLinkedList<T>::get_next_address(size_t index) const
 {
+    if(index<0 || index>=m_listLength)
+    {
+        std::cout<<"Out of bounds index for get_next_address().\n" 
+                 <<"Minimum allowed index = 0, Maximum allowed index = "<<m_listLength-1<<".\n"
+                 <<"get_next_address() was given indices: index="<<index<<"\n";
+    }
     Node<T> * current = m_head;
     size_t i = 0;
     current = walk_list_between_indices(current,i,index);
@@ -554,9 +622,16 @@ Node<T> * SinglyLinkedList<T>::get_next_address(size_t index) const
 }
 
 template<typename T>
-size_t SinglyLinkedList<T>::length() const{
+size_t SinglyLinkedList<T>::length() const
+{
     return m_listLength;
 }
+template<typename T>
+bool SinglyLinkedList<T>::isEmpty() const
+{
+    return m_listLength==0;
+}
+
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const SinglyLinkedList<T>& other)
