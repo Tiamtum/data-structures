@@ -154,7 +154,7 @@ CircularDoublyLinkedList<T>::CircularDoublyLinkedList(const CircularDoublyLinked
 
         originalCurrent = originalCurrent->next;
         
-        while(originalCurrent->next)
+        while(originalCurrent->next != other.m_head)
         {
             add_to_end(originalCurrent->value);
             originalCurrent=originalCurrent->next;
@@ -176,7 +176,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
 
     if(this->length() == other.length()) //lists are equal in length, no new allocations required just replace the values
     {
-        while(thisList->next)
+        while(thisList->next != m_head)
         {
             thisList->value = otherList->value;
             thisList = thisList->next;
@@ -190,7 +190,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
     {
         if(this->isEmpty())
         {
-            while(otherList->next)
+            while(otherList->next != other.m_head)
             {
                 this->add_to_end(otherList->value);
                 otherList = otherList->next;
@@ -199,7 +199,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
             return *this;
         }
         
-        while(thisList->next) //walk smaller list to it's end, replace values
+        while(thisList->next != m_head) //walk smaller list to it's end, replace values
         {
             thisList->value = otherList->value;
             otherList = otherList->next;
@@ -208,7 +208,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
 
         thisList->value = otherList->value;
         otherList = otherList->next;
-        while(otherList->next)
+        while(otherList->next != other.m_head)
         {
             add_to_end(otherList->value);
             otherList = otherList->next;
@@ -227,7 +227,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
             m_listLength = 0;
             return *this;
         }
-        while(otherList->next)                  //walk the smaller list and replace larger list values with its values
+        while(otherList->next != other.m_head)                  //walk the smaller list and replace larger list values with its values
         {
             thisList->value = otherList->value;
             otherList = otherList->next;
@@ -238,7 +238,7 @@ CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const Circul
         Node<T> * leftOverNode = thisList->next;
         thisList->next = m_head;
         
-        while(leftOverNode->next)               //walk the remainder of the larger list and deallocate the leftover nodes
+        while(leftOverNode->next != m_head)               //walk the remainder of the larger list and deallocate the leftover nodes
         {
             Node<T> * temp = leftOverNode;
             leftOverNode = leftOverNode->next;
@@ -374,25 +374,40 @@ void CircularDoublyLinkedList<T>::add_to_end(T value)
 template<typename T>
 void CircularDoublyLinkedList<T>::add_to_start(T value)
 {
-    // if(!isEmpty())
-    // {
-    //     Node<T> * newHead = new Node<T>;
-    //     newHead->value = value;
-    //     newHead->next = m_head;
-    //     m_head->previous = newHead;        
-    //     newHead->previous = m_head;
-    //     m_head->next = newHead;
-    //     m_tail = m_head;
-    //     m_head = newHead;
-    //     m_listLength++;    
-    // }
-    // else
-    // {
-    //     m_head->value = value;
-    //     m_head->next = m_head;
-    //     m_head->previous = m_head;
-    //     m_listLength++;        
-    // }
+    if(!isEmpty())
+    {      
+        if(m_head->next == m_head)
+        {
+            Node<T> * newHead = new Node<T>;
+            newHead->value = value;
+            newHead->next = m_head;
+            newHead->previous = m_head;
+            m_head->next = newHead;
+            m_head->previous = newHead;
+            m_tail = m_head;
+            m_head = newHead;
+            m_listLength++;
+        }
+        else
+        {
+            Node<T> * newHead = new Node<T>;
+            newHead->value = value;
+            newHead->next = m_head;
+            newHead->previous = m_tail;
+            m_head->previous = newHead;
+            m_tail->next = newHead;
+            m_head = newHead;
+            m_listLength++;
+        }
+    }
+    else
+    {
+        m_tail = m_head;
+        m_head->value = value;
+        m_head->next = m_head;
+        m_head->previous = m_head;
+        m_listLength++;        
+    }
 }
 
 template<typename T>
@@ -478,6 +493,7 @@ void CircularDoublyLinkedList<T>::delete_start()
         Node<T> * temp = m_head;
         m_head = temp->next;
         m_head->previous=m_tail;
+        m_tail->next = m_head;
         delete temp;
         m_listLength--;
     }
