@@ -68,8 +68,9 @@ namespace DoublyLinkedListTests{
     bool delete_end()
     {
         DoublyLinkedList<int> list1({1,2,3,4,5});
+        list1.delete_end();
         DoublyLinkedList<int> expected({1,2,3,4});
-        return list1==expected;;
+        return list1==expected;
     }
 
     bool replace_value()
