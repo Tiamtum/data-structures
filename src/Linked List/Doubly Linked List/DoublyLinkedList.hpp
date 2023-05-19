@@ -630,6 +630,7 @@ Node<T> * DoublyLinkedList<T>::get_address(size_t index) const
     current = walk_list_fowards_between_indices(current,i,index);
     return current;
 }
+
 template<typename T>
 Node<T> * DoublyLinkedList<T>::get_next_address(size_t index) const
 {
