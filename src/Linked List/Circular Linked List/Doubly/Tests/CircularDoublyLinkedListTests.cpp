@@ -57,21 +57,6 @@ namespace CircularDoublyLinkedListTests{
         return list1==expected;
     }
 
-    bool delete_start()
-    {
-        CircularDoublyLinkedList<int> list1({1,2,3,4,5});
-        list1.delete_start();
-        CircularDoublyLinkedList<int> expected({2,3,4,5});
-        return list1==expected;   
-    }
-
-    bool delete_end()
-    {
-        CircularDoublyLinkedList<int> list1({1,2,3,4,5});
-        CircularDoublyLinkedList<int> expected({1,2,3,4});
-        return list1==expected;;
-    }
-
     bool replace_value()
     {
         CircularDoublyLinkedList<int> list1({1,2,3,4,5});
@@ -251,11 +236,21 @@ TEST_CASE("Arbitrary Insertion Of Nodes")
     }
 }
 
-TEST_CASE("Deleting Nodes From Start and End")
+TEST_CASE("Deleting Nodes From Start")
 {
-    CHECK(CircularDoublyLinkedListTests::delete_start() == true);
-    CHECK(CircularDoublyLinkedListTests::delete_end() == true); 
+        CircularDoublyLinkedList<int> list1({1,2,3,4,5});
+        list1.delete_start();
+        CircularDoublyLinkedList<int> expected({2,3,4,5});
+        CHECK(list1==expected); 
 }
+TEST_CASE("Deleting Nodes From End")
+{
+    CircularDoublyLinkedList<int> list1({1,2,3,4,5});
+    list1.delete_end();
+    CircularDoublyLinkedList<int> expected({1,2,3,4});
+    CHECK(list1==expected);
+}
+
 
 TEST_CASE("Arbitrary Deletion of Nodes")
 {
