@@ -14,7 +14,7 @@ clean:
 	rm *.o $(TARGET) cachegrind.out.*
 
 leak_check:
-	valgrind -s --leak-check=full --show-leak-kinds=all ./$(TARGET)
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
 
 cachegrind:
 	valgrind --tool=cachegrind --branch-sim=yes ./$(TARGET)
