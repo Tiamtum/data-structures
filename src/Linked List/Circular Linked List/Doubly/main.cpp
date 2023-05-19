@@ -20,5 +20,7 @@ float randFloat(int from, int to)
 
 int main() 
 {
+    CircularDoublyLinkedList<int> list({1,2,3,4});
+    std::cout<<list;
 
 }
