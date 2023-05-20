@@ -30,8 +30,8 @@ class CircularDoublyLinkedList
     void replace_value(size_t index,T value); 
     void swap_values(size_t index1, size_t index2); 
     void sort() requires std::is_arithmetic<T>::value;  
-    T access_from_start(size_t index) const;
-    T access_from_end(size_t index) const;  
+    T access_from_start(int index) const;
+    T access_from_end(int index) const;  
     Node<T> * get_address(size_t index) const;
     Node<T> * get_next_address(size_t index) const;
     Node<T> * get_previous_address(size_t index) const;
@@ -48,7 +48,7 @@ class CircularDoublyLinkedList
     Node<T> * walk_list_to_end(Node<T> * current) const;    
     Node<T> * walk_list_fowards_between_indices(Node<T> * current, size_t& start, size_t end) const;  
     Node<T> * walk_list_to_start(Node<T> * current) const;    
-    Node<T> * walk_list_backwards_between_indices(Node<T> * current, int& start, size_t end) const;  
+    Node<T> * walk_list_backwards_between_indices(Node<T> * current, int& start, int end) const;  
 
     size_t m_listLength = 0;
     Node<T> * m_head;
@@ -86,7 +86,7 @@ Node<T> * CircularDoublyLinkedList<T>::walk_list_to_start(Node<T> * current) con
     return current;
 }
 template<typename T>
-Node<T> * CircularDoublyLinkedList<T>::walk_list_backwards_between_indices(Node<T> * current, int& start, size_t end) const
+Node<T> * CircularDoublyLinkedList<T>::walk_list_backwards_between_indices(Node<T> * current, int& start, int end) const
 {
     while(start>end)
     {
@@ -609,7 +609,7 @@ void CircularDoublyLinkedList<T>::sort() requires std::is_arithmetic<T>::value
 } 
 
 template<typename T>
-T CircularDoublyLinkedList<T>::access_from_start(size_t index) const
+T CircularDoublyLinkedList<T>::access_from_start(int index) const
 {
     if(isEmpty())
     {
@@ -633,7 +633,7 @@ T CircularDoublyLinkedList<T>::access_from_start(size_t index) const
 }
 
 template<typename T>
-T CircularDoublyLinkedList<T>::access_from_end(size_t index) const
+T CircularDoublyLinkedList<T>::access_from_end(int index) const
 {
     if(isEmpty())
     {
