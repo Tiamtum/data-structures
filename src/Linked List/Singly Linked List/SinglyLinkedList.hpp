@@ -44,8 +44,8 @@ class SinglyLinkedList
     private:
     Node<T> * walk_list_to_end(Node<T> * current) const;
     Node<T> * walk_list_between_indices(Node<T> * current, size_t& start, size_t end) const;
-    size_t m_listLength = 0;
     Node<T> * m_head;
+    size_t m_listLength = 0;
 };
 
 template<typename T>
