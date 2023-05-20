@@ -5,7 +5,7 @@
 - Circular Singly Linked List ✅
 - Doubly Linked List ✅
 - Doubly Circular Linked List ✅
-- Stack ❌
+- Stack ✅
 - Queue ❌
 - Trees ❌
 - Hash Table ❌
