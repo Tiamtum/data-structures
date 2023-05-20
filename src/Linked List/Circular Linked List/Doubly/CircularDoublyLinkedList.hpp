@@ -166,7 +166,7 @@ CircularDoublyLinkedList<T>::CircularDoublyLinkedList(const CircularDoublyLinked
 template<typename T>
 CircularDoublyLinkedList<T>& CircularDoublyLinkedList<T>::operator=(const CircularDoublyLinkedList& other) noexcept
 {
-    if(this == &other || this->isEmpty() && other.isEmpty())
+    if(this == &other || (this->isEmpty() && other.isEmpty()))
     {
         return *this;
     }

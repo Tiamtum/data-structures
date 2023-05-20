@@ -164,7 +164,7 @@ DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList& other) noexcept
 template<typename T>
 DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList& other) noexcept
 {
-    if(this == &other || this->isEmpty() && other.isEmpty())
+    if(this == &other || (this->isEmpty() && other.isEmpty()))
     {
         return *this;
     }

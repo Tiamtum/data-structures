@@ -133,7 +133,7 @@ SinglyLinkedList<T>::SinglyLinkedList(const SinglyLinkedList& other) noexcept
 template <typename T>
 SinglyLinkedList<T>& SinglyLinkedList<T>::operator=(const SinglyLinkedList<T>& other) noexcept
 {
-    if(this == &other || this->isEmpty() && other.isEmpty()) //assigning to itself or assigning empty to empty
+    if(this == &other || (this->isEmpty() && other.isEmpty())) //assigning to itself or assigning empty to empty
     {
         return *this;
     }

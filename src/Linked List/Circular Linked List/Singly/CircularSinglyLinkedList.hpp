@@ -135,7 +135,7 @@ CircularSinglyLinkedList<T>::CircularSinglyLinkedList(const CircularSinglyLinked
 template<typename T>
 CircularSinglyLinkedList<T>& CircularSinglyLinkedList<T>::operator=(const CircularSinglyLinkedList& other) noexcept
 {
-    if(this == &other || this->isEmpty() && other.isEmpty())
+    if(this == &other || (this->isEmpty() && other.isEmpty()))
     {
         return *this;
     }
