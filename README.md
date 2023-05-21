@@ -6,7 +6,7 @@
 - Doubly Linked List ✅
 - Doubly Circular Linked List ✅
 - Stack ✅
-- Queue ❌
+- Queue ✅
 - Trees ❌
 - Hash Table ❌
 - Graph ❌
