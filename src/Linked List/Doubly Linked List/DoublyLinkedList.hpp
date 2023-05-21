@@ -356,13 +356,12 @@ void DoublyLinkedList<T>::add_to_end(T value)
     }
     else
     {
-        Node<T> * current = m_head;
-        current = walk_list_to_end(current);
-        m_tail = new Node<T>;
-        current->next = m_tail;
-        m_tail->value = value;
-        m_tail->next = nullptr;
-        m_tail->previous = current;
+        Node<T> * newTail = new Node<T>;
+        newTail->value = value;
+        newTail->next = nullptr;
+        newTail->previous = m_tail;
+        m_tail->next = newTail;
+        m_tail = newTail;
         m_listLength++;
     }    
 }
