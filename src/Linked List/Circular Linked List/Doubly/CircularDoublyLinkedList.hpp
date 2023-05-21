@@ -351,23 +351,24 @@ void CircularDoublyLinkedList<T>::add_to_end(T value)
     {
         m_tail = new Node<T>;
         m_head->next = m_tail;
+        m_head->previous = m_tail;
+
         m_tail->value = value;
         m_tail->next = m_head;
         m_tail->previous = m_head;
-        m_head->previous = m_tail;
+        
         m_listLength++;
     }
     else
     {
-        Node<T> * current = m_head;
-        current = walk_list_to_end(current);
-        m_tail = new Node<T>;
-        current->next = m_tail;
-        m_tail->value = value;
-        m_tail->next = m_head;
-        m_tail->previous = current;
-        m_head->previous = m_tail;
-        m_listLength++;
+        Node<T> * newTail = new Node<T>;
+        newTail->value = value;
+        newTail->next = m_head;
+        newTail->previous = m_tail;
+        m_tail->next = newTail;
+        m_tail = newTail;
+        m_head->previous = newTail;
+        m_listLength++;        
     }    
 }
 
