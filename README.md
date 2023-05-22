@@ -7,6 +7,8 @@
 - Circular Doubly Linked List ✅
 - Stack ✅
 - Queue ✅
-- Trees ❌
+- Trees 🚧
 - Hash Table ❌
 - Graph ❌
+
+<!--✅ ❌ 🚧  -->
